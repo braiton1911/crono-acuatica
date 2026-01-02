@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crono-Acuatica</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="header">
+    <h1>🦈 Crono-Acuatica</h1>
+    <p class="sub">Pileta 25 m · Largada global · Llegadas por carril</p>
+  </header>
+
+  <section class="panel">
+    <div class="row">
+      <label>Etiqueta</label>
+      <input id="label" placeholder="Ej: 8×100 libre - Grupo A" />
+    </div>
+
+    <div class="row">
+      <label>Distancia</label>
+      <select id="distance">
+        <option value="50">50 m</option>
+        <option value="75">75 m</option>
+        <option value="100" selected>100 m</option>
+        <option value="150">150 m</option>
+        <option value="200">200 m</option>
+        <option value="400">400 m</option>
+      </select>
+    </div>
+
+    <div class="row grid-5">
+      <div class="laneCfg"><span>Carril 1</span><input type="number" min="0" max="10" value="0" id="cfg1" /></div>
+      <div class="laneCfg"><span>Carril 2</span><input type="number" min="0" max="10" value="0" id="cfg2" /></div>
+      <div class="laneCfg"><span>Carril 3</span><input type="number" min="0" max="10" value="0" id="cfg3" /></div>
+      <div class="laneCfg"><span>Carril 4</span><input type="number" min="0" max="10" value="0" id="cfg4" /></div>
+      <div class="laneCfg"><span>Carril 5</span><input type="number" min="0" max="10" value="0" id="cfg5" /></div>
+    </div>
+
+    <div class="row actions">
+      <button id="btnBuild" class="btn">Generar carriles</button>
+      <button id="btnStart" class="btn primary">Iniciar serie</button>
+      <button id="btnStop" class="btn">Detener</button>
+    </div>
+
+    <div class="row actions">
+      <button id="btnUndo" class="btn">↩ Deshacer</button>
+      <button id="btnReport" class="btn">📊 Ver informe</button>
+      <button id="btnExport" class="btn">⬇ Exportar CSV</button>
+      <button id="btnClear" class="btn danger">🗑 Borrar todo</button>
+    </div>
+
+    <div class="status">
+      Estado: <strong id="statusText">DETENIDA</strong>
+      <div class="hint" id="lastMsg">Configurá carriles → “Generar carriles” → “Iniciar serie”.</div>
+    </div>
+  </section>
+
+  <main id="lanes" class="lanes"></main>
+
+  <!-- INFORME (NO MODAL, NO BLOQUEA) -->
+  <section id="reportSection" class="reportSection hidden">
+    <div class="reportHeader">
+      <div>
+        <div class="reportH1">📊 Informe de resultados</div>
+        <div class="reportH2" id="reportSub">—</div>
+      </div>
+      <button id="btnHideReport" class="btn">Ocultar</button>
+    </div>
+
+    <div id="reportBody" class="reportBody"></div>
+
+    <div class="reportFooter">
+      <button id="btnExport2" class="btn primary">Exportar CSV</button>
+    </div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>
