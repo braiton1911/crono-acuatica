@@ -14,9 +14,28 @@
   </header>
 
   <section class="panel">
+    <!-- Cronómetro en vivo -->
+    <div class="chronoWrap">
+      <div class="chronoLabel">CRONÓMETRO</div>
+      <div id="chrono" class="chrono">00:00.00</div>
+      <div id="chronoHint" class="chronoHint">Listo para iniciar</div>
+    </div>
+
     <div class="row">
       <label>Etiqueta</label>
-      <input id="label" placeholder="Ej: 8×100 libre - Grupo A" />
+      <input id="label" placeholder="Ej: 100 m · Serie 1/20 · Grupo A" />
+    </div>
+
+    <div class="row">
+      <label>Series</label>
+      <select id="totalSeries">
+        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+        <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
+        <option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+        <option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option>
+        <option value="17">17</option><option value="18">18</option><option value="19">19</option>
+        <option value="20" selected>20</option>
+      </select>
     </div>
 
     <div class="row">
@@ -47,9 +66,11 @@
 
     <div class="row actions">
       <button id="btnUndo" class="btn">↩ Deshacer</button>
+      <button id="btnDuplicate" class="btn">📌 Duplicar serie</button>
+      <button id="btnNewSeries" class="btn">➕ Nueva serie</button>
       <button id="btnReport" class="btn">📊 Ver informe</button>
       <button id="btnExport" class="btn">⬇ Exportar CSV</button>
-      <button id="btnClear" class="btn danger">🗑 Borrar todo</button>
+      <button id="btnClearAll" class="btn danger">🗑 Borrar todo</button>
     </div>
 
     <div class="status">
@@ -60,7 +81,7 @@
 
   <main id="lanes" class="lanes"></main>
 
-  <!-- INFORME (NO MODAL, NO BLOQUEA) -->
+  <!-- INFORME (NO BLOQUEA) -->
   <section id="reportSection" class="reportSection hidden">
     <div class="reportHeader">
       <div>
@@ -73,10 +94,21 @@
     <div id="reportBody" class="reportBody"></div>
 
     <div class="reportFooter">
-      <button id="btnExport2" class="btn primary">Exportar CSV</button>
+      <button id="btnExport2" class="btn primary">Exportar CSV (esta serie)</button>
     </div>
+  </section>
+
+  <!-- HISTORIAL -->
+  <section class="historySection">
+    <div class="historyHeader">
+      <div class="historyTitle">🗂 Historial de series</div>
+      <div class="historySub">Se guarda en este dispositivo</div>
+    </div>
+
+    <div id="historyList" class="historyList"></div>
   </section>
 
   <script src="app.js"></script>
 </body>
 </html>
+
