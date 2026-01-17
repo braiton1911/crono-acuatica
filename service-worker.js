@@ -1,4 +1,4 @@
-const CACHE = "crono-acuatica-FORCE-2026";
+const CACHE = "crono-acuatica-v9";
 
 const ASSETS = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.json"];
 
@@ -17,4 +17,5 @@ self.addEventListener("activate", (e) => {
 self.addEventListener("fetch", (e) => {
   e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
 });
+
 
