@@ -7,35 +7,40 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
   <header class="header">
-    <h1>🦈 Crono-Acuatica</h1>
-    <p class="sub">Pileta 25 m · Largada global · Llegadas por carril</p>
+    <div class="brand">
+      <!-- Tiburón SVG (icono) -->
+      <svg class="shark" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M6 36c9-12 22-18 38-18 2-4 7-8 12-10-1 5-4 10-8 13 3 5 5 10 5 15 0 9-7 16-18 16H18c-6 0-10-4-12-9z" fill="currentColor" opacity="0.95"/>
+        <circle cx="43" cy="28" r="2.2" fill="#ff7a00"/>
+        <path d="M22 41l4 6 4-6 4 6 4-6" fill="none" stroke="#ff7a00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+
+      <div>
+        <h1>Crono-Acuatica</h1>
+        <p class="sub">Entrenamiento · Largada global · Series consecutivas</p>
+      </div>
+    </div>
   </header>
 
   <section class="panel">
-    <!-- Cronómetro en vivo -->
+    <!-- Cronómetro global visible -->
     <div class="chronoWrap">
-      <div class="chronoLabel">CRONÓMETRO</div>
-      <div id="chrono" class="chrono">00:00.00</div>
-      <div id="chronoHint" class="chronoHint">Listo para iniciar</div>
+      <div class="chronoTop">
+        <div>
+          <div class="chronoLabel">CRONÓMETRO GLOBAL</div>
+          <div id="chrono" class="chrono">00:00.00</div>
+        </div>
+        <div class="pill" id="pillState">DETENIDA</div>
+      </div>
+      <div id="chronoHint" class="chronoHint">Configurá carriles → iniciar serie.</div>
     </div>
 
     <div class="row">
       <label>Etiqueta</label>
-      <input id="label" placeholder="Ej: 100 m · Serie 1/20 · Grupo A" />
-    </div>
-
-    <div class="row">
-      <label>Series</label>
-      <select id="totalSeries">
-        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
-        <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
-        <option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
-        <option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option>
-        <option value="17">17</option><option value="18">18</option><option value="19">19</option>
-        <option value="20" selected>20</option>
-      </select>
+      <input id="label" placeholder="Ej: Grupo A (opcional)" />
     </div>
 
     <div class="row">
@@ -50,6 +55,11 @@
       </select>
     </div>
 
+    <div class="row">
+      <label>Series</label>
+      <select id="totalSeries"></select>
+    </div>
+
     <div class="row grid-5">
       <div class="laneCfg"><span>Carril 1</span><input type="number" min="0" max="10" value="0" id="cfg1" /></div>
       <div class="laneCfg"><span>Carril 2</span><input type="number" min="0" max="10" value="0" id="cfg2" /></div>
@@ -60,14 +70,13 @@
 
     <div class="row actions">
       <button id="btnBuild" class="btn">Generar carriles</button>
-      <button id="btnStart" class="btn primary">Iniciar serie</button>
-      <button id="btnStop" class="btn">Detener</button>
+      <button id="btnStart" class="btn primary">Iniciar Serie</button>
+      <button id="btnStop" class="btn stop">Detener</button>
     </div>
 
     <div class="row actions">
       <button id="btnUndo" class="btn">↩ Deshacer</button>
-      <button id="btnDuplicate" class="btn">📌 Duplicar serie</button>
-      <button id="btnNewSeries" class="btn">➕ Nueva serie</button>
+      <button id="btnNextSeries" class="btn">➡️ Preparar Serie siguiente</button>
       <button id="btnReport" class="btn">📊 Ver informe</button>
       <button id="btnExport" class="btn">⬇ Exportar CSV</button>
       <button id="btnClearAll" class="btn danger">🗑 Borrar todo</button>
@@ -75,7 +84,7 @@
 
     <div class="status">
       Estado: <strong id="statusText">DETENIDA</strong>
-      <div class="hint" id="lastMsg">Configurá carriles → “Generar carriles” → “Iniciar serie”.</div>
+      <div class="hint" id="lastMsg">En cada serie: Iniciar → registrar llegadas → Detener → descanso → Serie siguiente.</div>
     </div>
   </section>
 
@@ -85,7 +94,7 @@
   <section id="reportSection" class="reportSection hidden">
     <div class="reportHeader">
       <div>
-        <div class="reportH1">📊 Informe de resultados</div>
+        <div class="reportH1">📊 Informe de esta serie</div>
         <div class="reportH2" id="reportSub">—</div>
       </div>
       <button id="btnHideReport" class="btn">Ocultar</button>
@@ -102,13 +111,11 @@
   <section class="historySection">
     <div class="historyHeader">
       <div class="historyTitle">🗂 Historial de series</div>
-      <div class="historySub">Se guarda en este dispositivo</div>
+      <div class="historySub">Cada serie se guarda por separado en este dispositivo</div>
     </div>
-
     <div id="historyList" class="historyList"></div>
   </section>
 
   <script src="app.js"></script>
 </body>
 </html>
-
