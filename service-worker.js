@@ -1,4 +1,4 @@
-const CACHE = "crono-acuatica-v13";
+const CACHE = "crono-acuatica-v14";
 
 const ASSETS = [
   "./",
@@ -6,19 +6,21 @@ const ASSETS = [
   "./styles.css",
   "./app.js",
   "./manifest.json",
-  "./assets/logo-crono-acuatica",
   "./assets/logo-crono-acuatica.png"
 ];
 
 self.addEventListener("install", (e) => {
+  self.skipWaiting(); // ✅ activa el nuevo SW al instante
   e.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ASSETS)));
 });
 
 self.addEventListener("activate", (e) => {
   e.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.map((k) => (k !== CACHE ? caches.delete(k) : null)))
-    )
+    (async () => {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((k) => (k !== CACHE ? caches.delete(k) : null)));
+      await self.clients.claim(); // ✅ toma control sin esperar
+    })()
   );
 });
 
