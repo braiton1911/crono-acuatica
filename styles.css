@@ -490,3 +490,10 @@ button:active{ transform:scale(.98); }
   .btn{ min-width:140px; }
   .actions{ gap:8px; }
 }
+/* ===== Logo Crono-Acuatica ===== */
+.logo{
+  width:42px;
+  height:42px;
+  object-fit:contain;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,.35));
+}

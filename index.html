@@ -11,22 +11,29 @@
 <body>
   <header class="header">
     <div class="brand">
-      <!-- Tiburón SVG (icono) -->
-      <svg class="shark" viewBox="0 0 64 64" aria-hidden="true">
-        <path d="M6 36c9-12 22-18 38-18 2-4 7-8 12-10-1 5-4 10-8 13 3 5 5 10 5 15 0 9-7 16-18 16H18c-6 0-10-4-12-9z" fill="currentColor" opacity="0.95"/>
-        <circle cx="43" cy="28" r="2.2" fill="#ff7a00"/>
-        <path d="M22 41l4 6 4-6 4 6 4-6" fill="none" stroke="#ff7a00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      <!-- Logo (fallback: si no carga, muestra tiburón) -->
+      <img
+        src="./assets/logo-crono-acuatica"
+        alt="Logo Crono-Acuatica"
+        class="logo"
+        onerror="this.outerHTML = document.getElementById('sharkFallback').outerHTML;"
+      />
+
+      <!-- Fallback tiburón (oculto, se usa si falla el logo) -->
+      <svg id="sharkFallback" class="shark" viewBox="0 0 64 64" aria-hidden="true" style="display:none">
+        <path d="M6 36c9-12 22-18 38-18 2-4 7-8 12-10-1 5-4 10-8 13 3 5 5 10 5 15 0 9-7 16-18 16H18c-6 0-10-4-12-9z" fill="white" opacity="0.92"/>
+        <circle cx="43" cy="28" r="2.2" fill="#0b3c5d"/>
+        <path d="M22 41l4 6 4-6 4 6 4-6" fill="none" stroke="#0b3c5d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
       </svg>
 
       <div>
         <h1>Crono-Acuatica</h1>
-        <p class="sub">Entrenamiento · Largada global · Series consecutivas</p>
+        <p class="sub">Pileta 25 m · Largada global · Llegadas por carril</p>
       </div>
     </div>
   </header>
 
   <section class="panel">
-    <!-- Cronómetro global visible -->
     <div class="chronoWrap">
       <div class="chronoTop">
         <div>
@@ -90,7 +97,6 @@
 
   <main id="lanes" class="lanes"></main>
 
-  <!-- INFORME (NO BLOQUEA) -->
   <section id="reportSection" class="reportSection hidden">
     <div class="reportHeader">
       <div>
@@ -107,7 +113,6 @@
     </div>
   </section>
 
-  <!-- HISTORIAL -->
   <section class="historySection">
     <div class="historyHeader">
       <div class="historyTitle">🗂 Historial de series</div>
@@ -119,3 +124,4 @@
   <script src="app.js"></script>
 </body>
 </html>
+
