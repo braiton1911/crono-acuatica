@@ -584,3 +584,41 @@ button:active{ transform:scale(.98); }
   .laneCard{ padding: 10px; }
   .bigBtn{ font-size: 14px; border-radius: 14px; }
 }
+/* ===========================
+   PARTE 2 – TARJETA DE CARRIL
+   Versión compacta (menos scroll)
+   =========================== */
+
+/* Tarjeta general del carril */
+.laneCard{
+  padding: 10px !important;
+  border-radius: 14px;
+}
+
+/* Título del carril */
+.laneTitle{
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+/* Badge (Sin nadadores / En curso) */
+.badge{
+  padding: 4px 8px;
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+/* Texto de estado ("Esperando largada") */
+.small{
+  font-size: 11px;
+  margin-top: 6px;
+}
+
+/* Espaciado interno general */
+.laneCard > *{
+  margin-bottom: 6px;
+}
+
+.laneCard > *:last-child{
+  margin-bottom: 0;
+}
