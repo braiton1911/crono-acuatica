@@ -622,3 +622,174 @@ button:active{ transform:scale(.98); }
 .laneCard > *:last-child{
   margin-bottom: 0;
 }
+/* =========================================================
+   PARTE 2 - MODO PAD CUADRADO (MÓVIL)
+   Cada carril = un tile cuadrado con info dentro
+   ========================================================= */
+
+@media (max-width: 640px){
+
+  /* Grilla 2xN (se ven 4 a la vez) */
+  .lanes{
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(150px, 1fr)) !important;
+    gap: 10px !important;
+    padding: 10px !important;
+  }
+
+  /* Tarjeta del carril -> cuadrada */
+  .laneCard{
+    position: relative !important;
+    aspect-ratio: 1 / 1 !important;   /* ✅ cuadrado */
+    padding: 10px !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+  }
+
+  /* Título arriba, compacto */
+  .laneTitle{
+    position: absolute !important;
+    top: 10px !important;
+    left: 10px !important;
+    right: 10px !important;
+    margin: 0 !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+    z-index: 3 !important;
+    pointer-events: none !important;
+  }
+
+  /* Badge dentro del cuadrado */
+  .badge{
+    position: absolute !important;
+    top: 36px !important;
+    left: 10px !important;
+    margin: 0 !important;
+    padding: 4px 8px !important;
+    font-size: 11px !important;
+    z-index: 3 !important;
+  }
+
+  /* Ocultamos texto de estado externo para ahorrar espacio */
+  .small{
+    display: none !important;
+  }
+
+  /* Contenedor del botón: ocupa todo el tile */
+  .laneBtns{
+    position: absolute !important;
+    inset: 0 !important;
+    padding: 8px !important;
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+    z-index: 2 !important;
+  }
+
+  /* Botón principal: grande pero sin "tarjeta alta" */
+  .bigBtn{
+    width: 100% !important;
+    height: 62% !important;           /* ✅ ocupa parte baja del cuadrado */
+    border-radius: 14px !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+    font-weight: 950 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Si querés que el botón sea AÚN más protagonista:
+     descomentá estas 2 líneas (opcional)
+  */
+  /*
+  .bigBtn{ height: 70% !important; }
+  .badge{ top: 34px !important; }
+  */
+
+}
+/* =========================================================
+   FIX FINAL - PARTE 2 COMO PADS (MÓVIL)
+   Fuerza carriles a tiles cuadrados + reduce alto al máximo
+   ========================================================= */
+@media (max-width: 680px){
+
+  /* Grilla 2 columnas sí o sí */
+  main#lanes.lanes{
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(150px, 1fr)) !important;
+    gap: 10px !important;
+    padding: 10px !important;
+  }
+
+  /* Cada carril = CUADRADO real */
+  main#lanes.lanes .laneCard{
+    margin: 0 !important;
+    padding: 10px !important;
+    border-radius: 16px !important;
+    aspect-ratio: 1 / 1 !important;
+    height: auto !important;
+    overflow: hidden !important;
+    position: relative !important;
+
+    /* Evita que crezca por contenido */
+    display: block !important;
+  }
+
+  /* Compactar textos */
+  main#lanes.lanes .laneTitle{
+    margin: 0 !important;
+    font-size: 12px !important;
+    font-weight: 950 !important;
+
+    position: absolute !important;
+    top: 10px !important;
+    left: 10px !important;
+    right: 10px !important;
+    z-index: 3 !important;
+    pointer-events: none !important;
+  }
+
+  main#lanes.lanes .badge{
+    margin: 0 !important;
+    padding: 4px 8px !important;
+    font-size: 11px !important;
+
+    position: absolute !important;
+    top: 34px !important;
+    left: 10px !important;
+    z-index: 3 !important;
+  }
+
+  /* Esto es lo que te agranda MUCHO la tarjeta -> lo ocultamos */
+  main#lanes.lanes .small{
+    display: none !important;
+  }
+
+  /* El contenedor del botón ocupa el resto del tile */
+  main#lanes.lanes .laneBtns{
+    position: absolute !important;
+    left: 10px !important;
+    right: 10px !important;
+    bottom: 10px !important;
+    top: 66px !important; /* debajo del titulo+badge */
+    display: block !important;
+    z-index: 2 !important;
+  }
+
+  /* El botón llena el área libre del tile */
+  main#lanes.lanes .bigBtn{
+    width: 100% !important;
+    height: 100% !important;
+    aspect-ratio: auto !important;
+    padding: 0 !important;
+    border-radius: 14px !important;
+    font-size: 14px !important;
+    font-weight: 950 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+}

@@ -1,5 +1,4 @@
-const CACHE = "crono-acuatica-v16";
-
+const CACHE = "crono-acuatica-v18";
 
 
 const ASSETS = [
