@@ -1,248 +1,214 @@
+/* ==========================
+   CRONO-ACUATICA - styles.css
+   UI: azul + naranja + negro
+   Parte 2: Pads cuadrados (menos scroll)
+   ========================== */
+
 :root{
-  --negro:#0b0f14;
-  --negro-2:#111826;
+  --bg1:#071018;
+  --bg2:#0b1826;
+  --panel:rgba(255,255,255,.06);
+  --panel2:rgba(255,255,255,.04);
+  --borde:rgba(255,255,255,.12);
 
   --azul:#1e6fb8;
-  --azul-osc:#0b3c5d;
-  --azul-claro:#eaf4fb;
-
+  --azul2:#0e3b63;
   --naranja:#ff7a00;
-  --naranja-2:#ff9a3d;
+  --negro:#05080d;
 
-  --borde: rgba(255,255,255,.12);
-  --borde2: rgba(0,0,0,.10);
-  --blanco:#ffffff;
+  --txt:#eaf2ff;
+  --muted:rgba(234,242,255,.78);
 }
 
+/* Reset básico */
 *{ box-sizing:border-box; }
-
+html,body{ height:100%; }
 body{
   margin:0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-  background:linear-gradient(180deg, #070a0f, #0b0f14 45%, #0b0f14);
-  color:var(--blanco);
+  font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color:var(--txt);
+  background: radial-gradient(1200px 700px at 10% 0%, rgba(30,111,184,.25), transparent 55%),
+              radial-gradient(900px 600px at 90% 30%, rgba(255,122,0,.18), transparent 55%),
+              linear-gradient(180deg, var(--bg2), var(--bg1));
 }
 
-/* Header */
-.header{
-  padding:16px 16px 12px;
-  background:linear-gradient(135deg, var(--negro), var(--azul-osc));
-  border-bottom:1px solid var(--borde);
+/* Header / layout (se asume que ya existe en tu HTML) */
+.container{
+  max-width:1100px;
+  margin:0 auto;
+  padding:14px;
+}
+
+.card{
+  background:var(--panel);
+  border:1px solid var(--borde);
+  border-radius:22px;
+  box-shadow:0 16px 40px rgba(0,0,0,.35);
+  overflow:hidden;
+}
+
+.topbar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 16px;
+  background:linear-gradient(180deg, rgba(30,111,184,.30), rgba(0,0,0,.00));
 }
 
 .brand{
   display:flex;
-  gap:12px;
   align-items:center;
+  gap:10px;
 }
-
-.shark{
-  width:40px;
-  height:40px;
-  color:#ffffff;
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,.35));
+.brand img{
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  display:block;
 }
-
-.header h1{
-  margin:0;
+.brand .title{
+  font-weight:950;
   font-size:20px;
-  font-weight:900;
   letter-spacing:.2px;
 }
-
-.sub{
-  margin:6px 0 0;
+.brand .subtitle{
   font-size:12px;
-  opacity:.85;
+  color:var(--muted);
+  margin-top:2px;
 }
 
-/* Panel (sticky) */
-.panel{
-  padding:14px;
-  background:linear-gradient(180deg, rgba(17,24,38,.92), rgba(11,15,20,.92));
-  border-bottom:1px solid var(--borde);
-  position:sticky;
-  top:0;
-  z-index:10;
-  backdrop-filter: blur(8px);
-
-  /* ✅ Ajuste clave: evita que el panel se coma la pantalla */
-  max-height: 52vh;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
+.section{
+  padding:14px 14px 10px 14px;
 }
 
-/* Crono */
-.chronoWrap{
-  border:1px solid var(--borde);
-  background:linear-gradient(180deg, rgba(30,111,184,.20), rgba(255,122,0,.10));
-  border-radius:18px;
-  padding:12px;
-  margin-bottom:10px;
-}
+.row{ display:flex; gap:10px; flex-wrap:wrap; }
 
-.chronoTop{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:10px;
+.field{
+  flex:1 1 240px;
+  min-width:220px;
 }
-
-.chronoLabel{
-  font-size:12px;
+label{
+  display:block;
   font-weight:900;
-  opacity:.9;
+  margin:10px 0 8px;
 }
-
-.chrono{
-  font-size:36px;
-  font-weight:950;
-  letter-spacing:1px;
-  margin-top:6px;
-  line-height:1.05;
-}
-
-.pill{
-  padding:8px 10px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:900;
-  border:1px solid var(--borde);
-  background:rgba(255,255,255,.06);
-}
-
-.chronoHint{
-  margin-top:8px;
-  font-size:12px;
-  opacity:.85;
-}
-
-/* Inputs */
-.row{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  margin:8px 0;
-}
-
-.row label{
-  width:80px;
-  font-weight:900;
-  opacity:.95;
-}
-
-input, select, button{
-  font-size:14px;
-  padding:12px;
-  border-radius:14px;
-}
-
 input, select{
-  flex:1;
-  background:rgba(255,255,255,.06);
-  color:#fff;
+  width:100%;
+  padding:12px 14px;
+  border-radius:16px;
   border:1px solid var(--borde);
+  background:rgba(0,0,0,.18);
+  color:var(--txt);
   outline:none;
 }
+input::placeholder{ color:rgba(234,242,255,.40); }
 
-select option{
-  background:#0b0f14;
-  color:#fff;
+.grid-5{
+  display:grid;
+  grid-template-columns:repeat(5, 1fr);
+  gap:10px;
+  width:100%;
+}
+.laneCfg{
+  padding:10px;
+  border-radius:18px;
+  border:1px solid var(--borde);
+  background:var(--panel2);
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.laneCfg span{
+  font-size:12px;
+  font-weight:950;
+  color:var(--muted);
 }
 
 .actions{
-  justify-content:space-between;
-  flex-wrap:wrap;
+  width:100%;
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
   gap:10px;
+  margin-top:10px;
 }
+.actions + .actions{ grid-template-columns:repeat(5, 1fr); }
 
-button{
-  cursor:pointer;
-  font-weight:900;
+.btn{
+  padding:12px 12px;
+  border-radius:18px;
   border:1px solid var(--borde);
   background:rgba(255,255,255,.06);
-  color:#fff;
+  color:var(--txt);
+  font-weight:950;
+  cursor:pointer;
 }
+.btn:hover{ filter:brightness(1.06); }
+.btn:disabled{ opacity:.55; cursor:not-allowed; }
 
-button:active{ transform:scale(.98); }
-
-.btn{ flex:1; min-width:160px; }
-
-.primary{
-  background:linear-gradient(135deg, var(--naranja), var(--naranja-2));
-  color:#0b0f14;
-  border:none;
+.btn.primary{
+  background:linear-gradient(180deg, rgba(255,122,0,.95), rgba(255,122,0,.65));
+  border-color:rgba(255,122,0,.55);
+  color:#101010;
 }
-
-.stop{
-  background:rgba(255,122,0,.08);
+.btn.stop{
+  background:rgba(0,0,0,.25);
+  border-color:rgba(255,122,0,.55);
   color:var(--naranja);
-  border:1.5px solid rgba(255,122,0,.75);
 }
-
-.danger{
-  background:rgba(255,122,0,.08);
-  color:var(--naranja);
-  border:1.5px solid rgba(255,122,0,.75);
+.btn.danger{
+  border-color:rgba(255,0,0,.35);
+  background:rgba(255,0,0,.08);
+  color:#ffb7b7;
 }
 
 .status{
   margin-top:10px;
   padding:12px;
-  border-radius:16px;
-  background:rgba(255,255,255,.05);
+  border-radius:18px;
   border:1px solid var(--borde);
+  background:rgba(255,255,255,.05);
   font-size:14px;
 }
-
 .hint{
   margin-top:6px;
   font-size:12px;
-  opacity:.85;
+  color:var(--muted);
 }
 
-/* Config carriles */
-.grid-5{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:8px;
-  align-items:stretch;
-}
+/* ==========================
+   PARTE 2: CARRILES (Pads)
+   ========================== */
 
-.laneCfg{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  padding:10px;
-  border-radius:16px;
-  background:rgba(255,255,255,.05);
-  border:1px solid var(--borde);
-}
-
-.laneCfg span{
-  font-size:12px;
-  font-weight:950;
-  opacity:.95;
-}
-
-/* Carriles */
-.lanes{ padding:14px; }
-
-.laneCard{
-  background:rgba(255,255,255,.05);
-  border-radius:20px;
+/* ✅ En vez de tarjetas en columna: grilla SIEMPRE (PC y móvil) */
+.lanes{
   padding:14px;
-  margin-bottom:14px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  gap:12px;
+}
+
+/* ✅ Cada carril es un “tile” compacto */
+.laneCard{
+  position:relative;
+  background:rgba(255,255,255,.05);
   border:1px solid var(--borde);
-  box-shadow:0 10px 28px rgba(0,0,0,.25);
+  border-radius:22px;
+  box-shadow:0 12px 30px rgba(0,0,0,.30);
+  padding:12px;
+  display:grid;
+  grid-template-rows:auto auto 1fr auto;
+  gap:8px;
+  min-height:210px; /* PC: compacto */
 }
 
+/* Título */
 .laneTitle{
-  font-size:15px;
+  font-size:14px;
   font-weight:950;
-  margin-bottom:10px;
+  margin:0;
 }
 
+/* Badge */
 .badge{
   display:inline-flex;
   align-items:center;
@@ -253,9 +219,15 @@ button:active{ transform:scale(.98); }
   font-weight:950;
   border:1px solid var(--borde);
   background:rgba(255,255,255,.06);
-  margin-bottom:10px;
+  width:max-content;
+  max-width:100%;
 }
-
+.badge span{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  max-width:220px;
+}
 .badge .dot{
   width:10px;
   height:10px;
@@ -264,532 +236,105 @@ button:active{ transform:scale(.98); }
   box-shadow:0 0 0 4px rgba(30,111,184,.18);
 }
 
+/* Zona botón */
 .laneBtns{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:10px;
+  display:flex;
+  align-items:stretch;
+  justify-content:stretch;
 }
 
+/* ✅ Botón “PAD” grande: SOLO ✅ */
 .bigBtn{
-  padding:18px 12px;
-  font-size:16px;
-  border-radius:18px;
-  background:linear-gradient(135deg, rgba(30,111,184,.9), rgba(30,111,184,.65));
-  color:#fff;
+  width:100%;
   border:none;
+  border-radius:18px;
+  background:linear-gradient(135deg, rgba(30,111,184,.18), rgba(30,111,184,.65));
+  color:#fff;
+  font-weight:1000;
+  cursor:pointer;
+  padding:0;
+  min-height:110px; /* PC */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:40px; /* ✅ grande para tocar rápido */
+  line-height:1;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
 }
-
+.bigBtn:active{ transform:scale(.995); }
 .bigBtn:disabled{
-  opacity:.55;
+  opacity:.50;
   cursor:not-allowed;
   background:rgba(255,255,255,.08);
   border:1px solid var(--borde);
 }
 
+/* Texto inferior */
 .small{
-  margin-top:10px;
+  margin:0;
   font-size:12px;
-  line-height:1.4;
-  opacity:.85;
+  color:var(--muted);
 }
 
-.hidden{ display:none; }
-
+/* Finalizado */
 .laneCard.done{
-  opacity:.78;
   border-color:rgba(255,122,0,.35);
+  opacity:.90;
 }
 .laneCard.done .laneTitle::after{
   content:" · FINALIZADO";
-  font-weight:950;
   color:var(--naranja);
+  font-weight:1000;
 }
 
-.bigBtn.pulse{ animation:pulseTap .28s ease-out; }
+/* Animación de “tap” si la usás */
+.bigBtn.pulse{ animation:pulseTap .22s ease-out; }
 @keyframes pulseTap{
   0%{ transform:scale(1); }
   60%{ transform:scale(1.02); }
   100%{ transform:scale(1); }
 }
-.laneCard.flash{ animation:flashLane .55s ease-out; }
-@keyframes flashLane{
-  0%{ box-shadow:0 0 0 0 rgba(30,111,184,.0); }
-  35%{ box-shadow:0 0 0 6px rgba(30,111,184,.18); }
-  100%{ box-shadow:0 0 0 0 rgba(30,111,184,.0); }
-}
 
-/* Informe */
-.reportSection{
-  margin:0 14px 20px;
-  background:rgba(255,255,255,.05);
-  border:1px solid var(--borde);
-  border-radius:22px;
-  overflow:hidden;
-  box-shadow:0 10px 26px rgba(0,0,0,.25);
-
-  /* ✅ Ajuste clave: al scrollear al informe no queda tapado por el sticky */
-  scroll-margin-top: 56vh;
-}
-
-.reportHeader{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  padding:14px;
-  background:linear-gradient(135deg, rgba(255,122,0,.18), rgba(30,111,184,.20));
-  border-bottom:1px solid var(--borde);
-}
-
-.reportH1{ font-weight:950; font-size:16px; }
-.reportH2{ font-size:12px; opacity:.9; margin-top:3px; }
-
-.reportBody{
-  padding:14px;
-  background:rgba(255,255,255,.03);
-}
-
-.reportFooter{
-  display:flex;
-  gap:10px;
-  padding:14px;
-  background:rgba(255,255,255,.03);
-  border-top:1px solid var(--borde);
-}
-
-.reportCard{
-  background:rgba(0,0,0,.18);
-  border:1px solid var(--borde);
-  border-radius:18px;
-  padding:12px;
-  margin-bottom:12px;
-}
-
-.reportTitle{
-  font-weight:950;
-  margin-bottom:8px;
-}
-
-.table{
-  width:100%;
-  border-collapse:separate;
-  border-spacing:0;
-  overflow:hidden;
-  border:1px solid var(--borde);
-  border-radius:14px;
-}
-
-.table th, .table td{
-  padding:10px;
-  font-size:13px;
-  border-bottom:1px solid var(--borde);
-}
-
-.table th{
-  text-align:left;
-  background:rgba(255,255,255,.06);
-  font-weight:950;
-}
-
-.table tr:last-child td{ border-bottom:none; }
-
-.kpiRow{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  margin-bottom:12px;
-}
-
-.kpi{
-  flex:1;
-  min-width:180px;
-  background:rgba(0,0,0,.18);
-  border:1px solid var(--borde);
-  border-radius:18px;
-  padding:12px;
-}
-
-.kpiLabel{ font-size:12px; opacity:.85; margin-bottom:6px; }
-.kpiValue{ font-weight:950; font-size:16px; }
-
-.warn{
-  margin-top:8px;
-  font-size:12px;
-  color:var(--naranja);
-  font-weight:950;
-}
-
-/* Historial */
-.historySection{
-  margin:0 14px 24px;
-  background:rgba(255,255,255,.05);
-  border:1px solid var(--borde);
-  border-radius:22px;
-  overflow:hidden;
-  box-shadow:0 10px 26px rgba(0,0,0,.22);
-}
-
-.historyHeader{
-  padding:14px;
-  border-bottom:1px solid var(--borde);
-}
-
-.historyTitle{ font-weight:950; }
-.historySub{ font-size:12px; opacity:.8; margin-top:4px; }
-
-.historyList{
-  padding:12px;
-  background:rgba(255,255,255,.03);
-}
-
-.histItem{
-  background:rgba(0,0,0,.18);
-  border:1px solid var(--borde);
-  border-radius:18px;
-  padding:12px;
-  margin-bottom:10px;
-}
-
-.histName{ font-weight:950; font-size:14px; }
-.histMeta{ font-size:12px; opacity:.85; margin-top:4px; }
-
-.histBtns{
-  display:flex;
-  gap:8px;
-  margin-top:10px;
-  flex-wrap:wrap;
-}
-
-.miniBtn{
-  padding:10px 12px;
-  border-radius:14px;
-  border:1px solid var(--borde);
-  background:rgba(255,255,255,.06);
-  font-weight:950;
-  color:#fff;
-}
-
-.primaryMini{
-  background:linear-gradient(135deg, var(--naranja), var(--naranja-2));
-  color:#0b0f14;
-  border:none;
-}
-
-.dangerMini{
-  background:rgba(255,122,0,.08);
-  color:var(--naranja);
-  border:1.5px solid rgba(255,122,0,.75);
-}
-
-/* ✅ Compactación extra en pantallas chicas (mejor toque) */
-@media (max-width: 560px){
-  .panel{ padding:10px; }
-  .chrono{ font-size:30px; }
-  .row{ margin:6px 0; }
-  input, select, button{ padding:10px; border-radius:12px; }
-  .btn{ min-width:140px; }
-  .actions{ gap:8px; }
-}
-/* ===== Logo Crono-Acuatica ===== */
-.logo{
-  width:42px;
-  height:42px;
-  object-fit:contain;
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,.35));
-}
-/* ===========================
-   PARTE 2 (Carriles) en GRILLA
-   + Botón "Registrar llegada" tipo PAD
-   =========================== */
-
-/* Contenedor de carriles -> grilla responsive (PC + móvil) */
-.lanes{
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 12px;
-  padding: 12px;
-}
-
-/* Tarjeta de carril más baja (menos scroll) */
-.laneCard{
-  margin: 0;                 /* saca el margin-bottom anterior */
-  padding: 12px;
-  border-radius: 18px;
-}
-
-/* Título y espacios más compactos */
-.laneTitle{
-  margin-bottom: 8px;
-  font-size: 14px;
-}
-
-/* Badge más chico */
-.badge{
-  margin-bottom: 10px;
-  padding: 5px 9px;
-  font-size: 12px;
-}
-
-/* Zona del botón: que sea compacta */
-.laneBtns{
-  display: grid;
-  grid-template-columns: 1fr; /* por defecto una columna */
-  gap: 10px;
-}
-
-/* Botón principal -> PAD cuadrado */
-.bigBtn{
-  width: 100%;
-  aspect-ratio: 1 / 1;       /* ✅ lo hace cuadrado */
-  padding: 0;                /* ✅ elimina alto extra */
-  border-radius: 16px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  text-align: center;
-  font-weight: 950;
-  font-size: 16px;
-  line-height: 1.15;
-}
-
-/* Si el texto es largo (Registrar llegada), que se acomode bonito */
-.bigBtn span, .bigBtn{
-  white-space: normal;
-  word-break: break-word;
-}
-
-/* Texto pequeño del carril (estado) más compacto */
-.small{
-  margin-top: 8px;
-  font-size: 12px;
-}
-
-/* En pantallas muy grandes, permitimos más columnas (hasta 5 aprox.) */
-@media (min-width: 1100px){
-  .lanes{
-    grid-template-columns: repeat(5, minmax(200px, 1fr));
-  }
-}
-
-/* En móviles: 2 columnas para que el botón siga siendo tocable */
-@media (max-width: 560px){
-  .lanes{
-    grid-template-columns: repeat(2, minmax(160px, 1fr));
-    gap: 10px;
-    padding: 10px;
-  }
-
-  .laneCard{ padding: 10px; }
-  .bigBtn{ font-size: 14px; border-radius: 14px; }
-}
-/* ===========================
-   PARTE 2 – TARJETA DE CARRIL
-   Versión compacta (menos scroll)
-   =========================== */
-
-/* Tarjeta general del carril */
-.laneCard{
-  padding: 10px !important;
-  border-radius: 14px;
-}
-
-/* Título del carril */
-.laneTitle{
-  font-size: 13px;
-  margin-bottom: 6px;
-}
-
-/* Badge (Sin nadadores / En curso) */
-.badge{
-  padding: 4px 8px;
-  font-size: 11px;
-  margin-bottom: 6px;
-}
-
-/* Texto de estado ("Esperando largada") */
-.small{
-  font-size: 11px;
-  margin-top: 6px;
-}
-
-/* Espaciado interno general */
-.laneCard > *{
-  margin-bottom: 6px;
-}
-
-.laneCard > *:last-child{
-  margin-bottom: 0;
-}
-/* =========================================================
-   PARTE 2 - MODO PAD CUADRADO (MÓVIL)
-   Cada carril = un tile cuadrado con info dentro
-   ========================================================= */
-
+/* ==========================
+   MÓVIL: 2 columnas + tiles cuadrados
+   ========================== */
 @media (max-width: 640px){
 
-  /* Grilla 2xN (se ven 4 a la vez) */
+  .actions{ grid-template-columns:repeat(2, 1fr); }
+  .actions + .actions{ grid-template-columns:repeat(2, 1fr); }
+
+  .grid-5{ grid-template-columns:repeat(4, 1fr); } /* para que no explote */
+  .laneCfg{ padding:10px; }
+
+  /* ✅ 2 columnas (se ven 4 pads casi completos) */
   .lanes{
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(150px, 1fr)) !important;
-    gap: 10px !important;
-    padding: 10px !important;
+    grid-template-columns:repeat(2, minmax(155px, 1fr));
+    gap:10px;
+    padding:10px;
   }
 
-  /* Tarjeta del carril -> cuadrada */
+  /* ✅ tile cuadrado para entrar en pantalla */
   .laneCard{
-    position: relative !important;
-    aspect-ratio: 1 / 1 !important;   /* ✅ cuadrado */
-    padding: 10px !important;
-    border-radius: 16px !important;
-    overflow: hidden !important;
+    aspect-ratio:1 / 1;
+    min-height:auto;
+    padding:10px;
+    border-radius:18px;
+    gap:6px;
   }
 
-  /* Título arriba, compacto */
-  .laneTitle{
-    position: absolute !important;
-    top: 10px !important;
-    left: 10px !important;
-    right: 10px !important;
-    margin: 0 !important;
-    font-size: 13px !important;
-    font-weight: 900 !important;
-    z-index: 3 !important;
-    pointer-events: none !important;
-  }
+  .laneTitle{ font-size:13px; }
+  .badge{ font-size:11px; padding:5px 8px; }
+  .badge span{ max-width:160px; }
 
-  /* Badge dentro del cuadrado */
-  .badge{
-    position: absolute !important;
-    top: 36px !important;
-    left: 10px !important;
-    margin: 0 !important;
-    padding: 4px 8px !important;
-    font-size: 11px !important;
-    z-index: 3 !important;
-  }
-
-  /* Ocultamos texto de estado externo para ahorrar espacio */
-  .small{
-    display: none !important;
-  }
-
-  /* Contenedor del botón: ocupa todo el tile */
-  .laneBtns{
-    position: absolute !important;
-    inset: 0 !important;
-    padding: 8px !important;
-    display: flex !important;
-    align-items: flex-end !important;
-    justify-content: center !important;
-    z-index: 2 !important;
-  }
-
-  /* Botón principal: grande pero sin "tarjeta alta" */
+  /* ✅ el PAD ocupa el centro/bajo del cuadrado */
   .bigBtn{
-    width: 100% !important;
-    height: 62% !important;           /* ✅ ocupa parte baja del cuadrado */
-    border-radius: 14px !important;
-    padding: 0 !important;
-    font-size: 14px !important;
-    font-weight: 950 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    min-height:0;
+    height:100%;
+    font-size:44px;
+    border-radius:16px;
   }
 
-  /* Si querés que el botón sea AÚN más protagonista:
-     descomentá estas 2 líneas (opcional)
-  */
-  /*
-  .bigBtn{ height: 70% !important; }
-  .badge{ top: 34px !important; }
-  */
-
-}
-/* =========================================================
-   FIX FINAL - PARTE 2 COMO PADS (MÓVIL)
-   Fuerza carriles a tiles cuadrados + reduce alto al máximo
-   ========================================================= */
-@media (max-width: 680px){
-
-  /* Grilla 2 columnas sí o sí */
-  main#lanes.lanes{
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(150px, 1fr)) !important;
-    gap: 10px !important;
-    padding: 10px !important;
-  }
-
-  /* Cada carril = CUADRADO real */
-  main#lanes.lanes .laneCard{
-    margin: 0 !important;
-    padding: 10px !important;
-    border-radius: 16px !important;
-    aspect-ratio: 1 / 1 !important;
-    height: auto !important;
-    overflow: hidden !important;
-    position: relative !important;
-
-    /* Evita que crezca por contenido */
-    display: block !important;
-  }
-
-  /* Compactar textos */
-  main#lanes.lanes .laneTitle{
-    margin: 0 !important;
-    font-size: 12px !important;
-    font-weight: 950 !important;
-
-    position: absolute !important;
-    top: 10px !important;
-    left: 10px !important;
-    right: 10px !important;
-    z-index: 3 !important;
-    pointer-events: none !important;
-  }
-
-  main#lanes.lanes .badge{
-    margin: 0 !important;
-    padding: 4px 8px !important;
-    font-size: 11px !important;
-
-    position: absolute !important;
-    top: 34px !important;
-    left: 10px !important;
-    z-index: 3 !important;
-  }
-
-  /* Esto es lo que te agranda MUCHO la tarjeta -> lo ocultamos */
-  main#lanes.lanes .small{
-    display: none !important;
-  }
-
-  /* El contenedor del botón ocupa el resto del tile */
-  main#lanes.lanes .laneBtns{
-    position: absolute !important;
-    left: 10px !important;
-    right: 10px !important;
-    bottom: 10px !important;
-    top: 66px !important; /* debajo del titulo+badge */
-    display: block !important;
-    z-index: 2 !important;
-  }
-
-  /* El botón llena el área libre del tile */
-  main#lanes.lanes .bigBtn{
-    width: 100% !important;
-    height: 100% !important;
-    aspect-ratio: auto !important;
-    padding: 0 !important;
-    border-radius: 14px !important;
-    font-size: 14px !important;
-    font-weight: 950 !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-  }
+  /* ✅ ocultamos el texto “Registradas…” para ahorrar espacio */
+  .small{ display:none; }
 }

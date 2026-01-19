@@ -1,10 +1,25 @@
-const LANE_COUNT = 5;
-const STORAGE_KEY = "CRONO_ACUATICA_V5";
+/* ==========================
+   CRONO-ACUATICA - app.js
+   (misma lógica, UI compacta)
+   ========================== */
 
+const LANE_COUNT = 5;
+const POOL_LEN = 25;
+const STORAGE_KEY = "crono_acuatica_state_v1";
+
+/* --- Elementos UI --- */
 const els = {
   label: document.getElementById("label"),
   distance: document.getElementById("distance"),
   totalSeries: document.getElementById("totalSeries"),
+
+  cfg: [
+    document.getElementById("cfg1"),
+    document.getElementById("cfg2"),
+    document.getElementById("cfg3"),
+    document.getElementById("cfg4"),
+    document.getElementById("cfg5"),
+  ],
 
   btnBuild: document.getElementById("btnBuild"),
   btnStart: document.getElementById("btnStart"),
@@ -17,462 +32,343 @@ const els = {
 
   statusText: document.getElementById("statusText"),
   lastMsg: document.getElementById("lastMsg"),
-  pillState: document.getElementById("pillState"),
-
-  lanes: document.getElementById("lanes"),
-  cfg: [1,2,3,4,5].map(i => document.getElementById("cfg"+i)),
 
   chrono: document.getElementById("chrono"),
   chronoHint: document.getElementById("chronoHint"),
 
+  lanes: document.getElementById("lanes"),
+
   reportSection: document.getElementById("reportSection"),
-  reportBody: document.getElementById("reportBody"),
   reportSub: document.getElementById("reportSub"),
+  reportBody: document.getElementById("reportBody"),
   btnHideReport: document.getElementById("btnHideReport"),
   btnExport2: document.getElementById("btnExport2"),
 
   historyList: document.getElementById("historyList"),
 };
 
-let chronoTimer = null;
-let state = loadState() || newState();
+/* --- Helpers --- */
+const pad2 = (n) => String(n).padStart(2, "0");
+
+function formatMs(ms){
+  const total = Math.max(0, ms|0);
+  const m = Math.floor(total / 60000);
+  const s = Math.floor((total % 60000) / 1000);
+  const cs = Math.floor((total % 1000) / 10);
+  return `${pad2(m)}:${pad2(s)}.${pad2(cs)}`;
+}
+
+function laneLabel(i){ return `Carril ${i+1}`; }
+
+function nowIso(){ return new Date().toISOString(); }
 
 function newState(){
   return {
-    running: false,
-
     config: {
       label: "",
-      distanceM: 100,
-      totalSeries: 20,
+      distance: 100,
+      totalSeries: 1,
       lanes: Array.from({length: LANE_COUNT}, () => ({ swimmerCount: 0 })),
     },
-
-    // “serie actual” dentro del bloque (1..total)
-    currentSeriesNumber: 1,
-
-    // historial de series realizadas (cada una es independiente)
-    series: [],
-
-    activeSeriesId: null
+    running: false,
+    series: [], // historial de series
   };
 }
 
-function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+let state = loadState();
+
+/* --- Cargar/Guardar --- */
 function loadState(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  }catch{ return null; }
+    if(!raw) return newState();
+    const parsed = JSON.parse(raw);
+    if(!parsed || !parsed.config) return newState();
+    return parsed;
+  }catch{
+    return newState();
+  }
+}
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
-function uuid(){ return crypto.randomUUID(); }
-
-function formatMs(ms){
-  ms = Math.max(0, Math.floor(ms));
-  const totalSec = Math.floor(ms/1000);
-  const min = Math.floor(totalSec/60);
-  const sec = totalSec % 60;
-  const cent = Math.floor((ms%1000)/10);
-  return `${String(min).padStart(2,"0")}:${String(sec).padStart(2,"0")}.${String(cent).padStart(2,"0")}`;
-}
-
-function laneLabel(li){ return `Carril ${li+1}`; }
-
-function setStatus(text, msg){
-  els.statusText.textContent = text;
-  els.pillState.textContent = text;
-  if (msg) els.lastMsg.textContent = msg;
+/* --- Series --- */
+function buildSeriesLabel(seriesIndex, total, dist, customLabel){
+  const base = customLabel?.trim() ? customLabel.trim() : "Entrenamiento";
+  return `${base} · Serie ${seriesIndex}/${total} · ${dist} m`;
 }
 
 function getActiveSeries(){
-  if(!state.activeSeriesId) return null;
-  return state.series.find(s => s.id === state.activeSeriesId) || null;
+  return state.series.find(s => s.isActive) || null;
 }
 
-function anyLaneConfigured(){
-  return state.config.lanes.some(l => (l.swimmerCount || 0) > 0);
-}
-
-function autoSeriesLabel(){
-  const d = Number(els.distance.value) || state.config.distanceM || 100;
-  const t = clamp(Number(els.totalSeries.value || 20), 1, 20);
-  const n = clamp(Number(state.currentSeriesNumber || 1), 1, t);
-  // etiqueta base opcional + serie
-  const base = (els.label.value || state.config.label || "").trim();
-  const main = `Serie ${n}/${t} · ${d} m`;
-  return base ? `${main} · ${base}` : main;
-}
-
-/* -----------------------
-   Cronómetro visible
------------------------ */
-function startChronoLoop(){
-  stopChronoLoop();
-  chronoTimer = setInterval(() => {
-    const s = getActiveSeries();
-    if(!s || !s.startMs) return;
-    const base = s.stopMs ? s.stopMs : Date.now();
-    els.chrono.textContent = formatMs(base - s.startMs);
-  }, 50);
-}
-function stopChronoLoop(){
-  if(chronoTimer){
-    clearInterval(chronoTimer);
-    chronoTimer = null;
+function syncConfigFromUI(){
+  state.config.label = (els.label?.value || "").trim();
+  state.config.distance = parseInt(els.distance?.value || "100", 10);
+  state.config.totalSeries = parseInt(els.totalSeries?.value || "1", 10);
+  for(let i=0;i<LANE_COUNT;i++){
+    state.config.lanes[i].swimmerCount = Math.max(0, parseInt(els.cfg[i]?.value || "0", 10));
   }
 }
 
-/* -----------------------
-   UI: selector series (1..20) mostrando “x100”
------------------------ */
+/* --- Select series según distancia (1..20) --- */
 function fillTotalSeriesSelect(){
-  const d = Number(els.distance.value) || 100;
-  const current = Number(els.totalSeries.value || state.config.totalSeries || 20);
+  const dist = parseInt(els.distance.value, 10);
   els.totalSeries.innerHTML = "";
-  for(let i=1; i<=20; i++){
+  for(let i=1;i<=20;i++){
     const opt = document.createElement("option");
     opt.value = String(i);
-    opt.textContent = i === 1 ? `1 serie x${d}` : `${i} series x${d}`;
-    if(i === current) opt.selected = true;
+    opt.textContent = `${i} serie${i>1?"s":""} x${dist}`;
     els.totalSeries.appendChild(opt);
   }
+  els.totalSeries.value = String(state.config.totalSeries || 1);
 }
 
-/* -----------------------
-   Config
------------------------ */
-function syncConfigFromUI(){
-  state.config.label = (els.label.value || "").trim();
-  state.config.distanceM = Number(els.distance.value) || 100;
-  state.config.totalSeries = clamp(Number(els.totalSeries.value || 20), 1, 20);
-
-  for(let li=0; li<LANE_COUNT; li++){
-    state.config.lanes[li].swimmerCount = clamp(Number(els.cfg[li].value || 0), 0, 10);
-  }
-
-  // ajustar currentSeriesNumber al rango
-  state.currentSeriesNumber = clamp(Number(state.currentSeriesNumber || 1), 1, state.config.totalSeries);
+/* --- Cronómetro global --- */
+let chronoRAF = null;
+function stopChronoLoop(){
+  if(chronoRAF) cancelAnimationFrame(chronoRAF);
+  chronoRAF = null;
 }
-
-/* -----------------------
-   Crear serie (una repetición real)
------------------------ */
-function createSeries(){
-  const id = uuid();
-  const distanceM = Number(els.distance.value) || state.config.distanceM || 100;
-  const total = clamp(Number(els.totalSeries.value || state.config.totalSeries || 20), 1, 20);
-  const n = clamp(Number(state.currentSeriesNumber || 1), 1, total);
-
-  const lanes = Array.from({length: LANE_COUNT}, (_, li) => ({
-    swimmerCount: clamp(Number(els.cfg[li].value || state.config.lanes[li].swimmerCount || 0), 0, 10),
-    nextArrivalIndex: 1
-  }));
-
-  return {
-    id,
-    createdAtIso: new Date().toISOString(),
-    label: autoSeriesLabel(),
-    distanceM,
-    totalSeries: total,
-    seriesNumber: n,
-    startMs: null,
-    stopMs: null,
-    lanes,
-    log: [],
-    events: []
+function startChronoLoop(){
+  stopChronoLoop();
+  const tick = () => {
+    const a = getActiveSeries();
+    if(a && state.running){
+      const ms = Date.now() - a.startMs;
+      els.chrono.textContent = formatMs(ms);
+      els.chronoHint.textContent = `En curso: Serie ${a.seriesIndex}/${a.totalSeries} · ${a.distance} m`;
+    }else{
+      // si no corre, mostrar el último valor congelado si existe
+      const a2 = getActiveSeries();
+      if(a2 && a2.stopMs){
+        els.chrono.textContent = formatMs(a2.stopMs - a2.startMs);
+      }else{
+        els.chrono.textContent = "00:00.00";
+      }
+    }
+    chronoRAF = requestAnimationFrame(tick);
   };
+  chronoRAF = requestAnimationFrame(tick);
 }
 
-/* -----------------------
-   Iniciar/Detener serie actual
------------------------ */
+/* --- UI Estado --- */
+function setStatus(main, msg){
+  els.statusText.textContent = main;
+  els.lastMsg.textContent = msg || "";
+}
+
+/* --- Acciones --- */
 function startSeries(){
   syncConfigFromUI();
-  saveState();
 
-  if(!anyLaneConfigured()){
-    alert("Configurá al menos un carril con nadadores.");
-    return;
+  // Si no existe serie activa, crear Serie 1
+  let active = getActiveSeries();
+  if(!active){
+    const seriesIndex = 1;
+    active = {
+      id: crypto.randomUUID(),
+      createdAtIso: nowIso(),
+      label: buildSeriesLabel(seriesIndex, state.config.totalSeries, state.config.distance, state.config.label),
+      seriesIndex,
+      totalSeries: state.config.totalSeries,
+      distance: state.config.distance,
+      startMs: Date.now(),
+      stopMs: null,
+      isActive: true,
+      lanes: state.config.lanes.map(l => ({ swimmerCount: l.swimmerCount, nextArrivalIndex: 1 })),
+      log: [], // {laneIndex, swimmerIndex, ms}
+    };
+    state.series.unshift(active);
+  }else{
+    // reiniciar cronómetro de la serie activa
+    active.startMs = Date.now();
+    active.stopMs = null;
+    // reset contador de llegadas por carril
+    active.lanes.forEach((l, i) => {
+      l.swimmerCount = state.config.lanes[i].swimmerCount;
+      l.nextArrivalIndex = 1;
+    });
+    active.log = [];
   }
 
-  const s = createSeries();
-  s.startMs = Date.now();
-
-  state.series.unshift(s);
-  state.activeSeriesId = s.id;
   state.running = true;
-
-  hideReport();
-
   saveState();
+  hideReport();
+  setStatus("EN CURSO", `Serie ${active.seriesIndex}/${active.totalSeries} iniciada.`);
   render();
-
-  setStatus("EN CURSO", `⏱️ Iniciada ${s.label}. Registrá llegadas por carril.`);
-  els.chronoHint.textContent = `Corriendo: ${s.label}`;
-  startChronoLoop();
 }
 
 function stopSeries(){
-  const s = getActiveSeries();
-  if(!s){
-    state.running = false;
-    saveState();
-    render();
-    setStatus("DETENIDA", "No hay serie activa.");
-    els.chronoHint.textContent = "Listo para iniciar";
-    return;
-  }
-
-  s.stopMs = Date.now();
+  const a = getActiveSeries();
+  if(!a) return;
   state.running = false;
-
+  a.stopMs = Date.now();
   saveState();
+  setStatus("DETENIDA", `Serie ${a.seriesIndex}/${a.totalSeries} detenida. Descanso y preparar siguiente.`);
   render();
-
-  setStatus("DETENIDA", `Serie ${s.seriesNumber}/${s.totalSeries} detenida. Descanso y prepará la siguiente.`);
-  els.chronoHint.textContent = `Detenida: ${s.label}`;
-  startChronoLoop();
 }
 
-/* -----------------------
-   Preparar serie siguiente (SIN iniciar)
------------------------ */
 function prepareNextSeries(){
+  const a = getActiveSeries();
+  if(!a){
+    setStatus("DETENIDA", "Primero iniciá una serie.");
+    return;
+  }
   if(state.running){
-    alert("Primero detené la serie actual.");
+    setStatus("EN CURSO", "Primero detené la serie actual.");
     return;
   }
-  syncConfigFromUI();
-  const total = state.config.totalSeries;
-  const next = clamp(state.currentSeriesNumber + 1, 1, total);
-  state.currentSeriesNumber = next;
+  const next = a.seriesIndex + 1;
+  if(next > a.totalSeries){
+    setStatus("DETENIDA", "Ya completaste todas las series configuradas.");
+    return;
+  }
+
+  // cerrar la actual como no-activa
+  a.isActive = false;
+
+  // crear nueva serie
+  const newS = {
+    id: crypto.randomUUID(),
+    createdAtIso: nowIso(),
+    label: buildSeriesLabel(next, a.totalSeries, a.distance, state.config.label),
+    seriesIndex: next,
+    totalSeries: a.totalSeries,
+    distance: a.distance,
+    startMs: Date.now(),
+    stopMs: null,
+    isActive: true,
+    lanes: state.config.lanes.map(l => ({ swimmerCount: l.swimmerCount, nextArrivalIndex: 1 })),
+    log: [],
+  };
+  state.series.unshift(newS);
+
+  saveState();
+  hideReport();
+  setStatus("DETENIDA", `Lista la Serie ${next}/${a.totalSeries}. Tocá "Iniciar Serie".`);
+  render();
+}
+
+function recordArrival(laneIndex, cardEl, btnEl){
+  const a = getActiveSeries();
+  if(!a || !state.running) return;
+
+  const lane = a.lanes[laneIndex];
+  const swimmers = lane.swimmerCount || 0;
+  if(swimmers <= 0) return;
+
+  const swimmerIndex = lane.nextArrivalIndex;
+  if(swimmerIndex > swimmers) return;
+
+  const ms = Date.now() - a.startMs;
+  a.log.push({ laneIndex, swimmerIndex, ms });
+
+  lane.nextArrivalIndex++;
+
+  // feedback rápido
+  btnEl.classList.remove("pulse");
+  void btnEl.offsetWidth;
+  btnEl.classList.add("pulse");
 
   saveState();
   render();
-  setStatus("DETENIDA", `Lista Serie ${next}/${total}. Tocá “Iniciar Serie” cuando vuelvan a largar.`);
-  els.chrono.textContent = "00:00.00";
-  els.chronoHint.textContent = `Lista: ${autoSeriesLabel()}`;
-}
-
-/* -----------------------
-   Llegadas
------------------------ */
-function ensureRunning(){
-  if(!state.running){
-    alert("Primero iniciá la serie.");
-    return false;
-  }
-  return true;
-}
-
-function recordArrival(li, cardEl, btnEl){
-  if(!ensureRunning()) return;
-
-  const s = getActiveSeries();
-  if(!s) return;
-
-  const lane = s.lanes[li];
-  if(!lane || lane.swimmerCount <= 0){
-    setStatus("EN CURSO", `⚠️ ${laneLabel(li)} sin nadadores.`);
-    return;
-  }
-
-  if(lane.nextArrivalIndex > lane.swimmerCount){
-    setStatus("EN CURSO", `🏁 ${laneLabel(li)}: ya registraste las ${lane.swimmerCount} llegadas.`);
-    return;
-  }
-
-  const now = Date.now();
-  const timeMs = now - s.startMs;
-  const swimmer = lane.nextArrivalIndex;
-
-  s.log.push({
-    timestampIso: new Date(now).toISOString(),
-    seriesId: s.id,
-    seriesLabel: s.label,
-    distanceM: s.distanceM,
-    lane: li+1,
-    swimmer,
-    event: "LLEGADA",
-    timeMs,
-    time: formatMs(timeMs)
-  });
-
-  s.events.push({ type:"arrival", li, swimmer });
-  lane.nextArrivalIndex += 1;
-
-  if(btnEl){
-    btnEl.classList.remove("pulse"); void btnEl.offsetWidth; btnEl.classList.add("pulse");
-  }
-  if(cardEl){
-    cardEl.classList.remove("flash"); void cardEl.offsetWidth; cardEl.classList.add("flash");
-  }
-
-  saveState();
-  render();
-  setStatus("EN CURSO", `✅ ${laneLabel(li)} — Nadador ${swimmer} — ${formatMs(timeMs)}`);
 }
 
 function undoSmart(){
-  const s = getActiveSeries();
-  if(!s || s.events.length === 0){
-    setStatus(state.running ? "EN CURSO" : "DETENIDA", "No hay nada para deshacer.");
-    return;
-  }
+  const a = getActiveSeries();
+  if(!a || a.log.length === 0) return;
 
-  const ev = s.events.pop();
-  if(ev.type === "arrival"){
-    const lane = s.lanes[ev.li];
-    for(let i=s.log.length-1; i>=0; i--){
-      const r = s.log[i];
-      if(r.lane === ev.li+1 && r.event === "LLEGADA" && r.swimmer === ev.swimmer){
-        s.log.splice(i,1);
-        break;
-      }
-    }
-    lane.nextArrivalIndex = Math.max(1, lane.nextArrivalIndex - 1);
-    saveState();
-    render();
-    setStatus(state.running ? "EN CURSO" : "DETENIDA", `↩ Deshecha llegada en ${laneLabel(ev.li)} (Nadador ${ev.swimmer}).`);
-    if(!els.reportSection.classList.contains("hidden")) showReport(s.id, true);
-  }
+  // deshacer último registro
+  const last = a.log.pop();
+  const lane = a.lanes[last.laneIndex];
+  lane.nextArrivalIndex = Math.max(1, lane.nextArrivalIndex - 1);
+
+  saveState();
+  setStatus(state.running ? "EN CURSO" : "DETENIDA", "Última llegada deshecha.");
+  render();
 }
 
-/* -----------------------
-   Informe + CSV
------------------------ */
-function hideReport(){ els.reportSection.classList.add("hidden"); }
+/* --- Reporte e historial --- */
+function showReport(seriesId){
+  const s = state.series.find(x => x.id === seriesId);
+  if(!s) return;
 
-function showReport(seriesId, refreshOnly=false){
-  const s = state.series.find(x => x.id === seriesId) || getActiveSeries();
-  if(!s || s.log.length === 0){
-    alert("Aún no hay registros para mostrar.");
-    return;
+  els.reportSub.textContent = s.label;
+  els.reportBody.innerHTML = "";
+
+  if(s.log.length === 0){
+    els.reportBody.innerHTML = `<div class="muted">No hay llegadas registradas en esta serie.</div>`;
+  }else{
+    // tabla simple
+    const rows = s.log
+      .slice()
+      .sort((a,b) => a.ms - b.ms)
+      .map(r => `
+        <tr>
+          <td>${laneLabel(r.laneIndex)}</td>
+          <td>Nadador ${r.swimmerIndex}</td>
+          <td>${formatMs(r.ms)}</td>
+        </tr>
+      `).join("");
+
+    els.reportBody.innerHTML = `
+      <table class="tbl">
+        <thead><tr><th>Carril</th><th>Nadador</th><th>Tiempo</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
   }
 
-  const when = new Date(s.createdAtIso).toLocaleString();
-  els.reportSub.textContent = `${when} · ${s.label}`;
-  els.reportBody.innerHTML = buildReportHtml(s);
   els.reportSection.classList.remove("hidden");
-  els.btnExport2.onclick = () => exportCSV(s.id);
-
-  if(!refreshOnly){
-els.reportSection.scrollIntoView({behavior:"smooth", block:"center"});
-
-  }
 }
 
-function buildReportHtml(s){
-  const rows = [...s.log].sort((a,b) => (a.lane-b.lane) || (a.swimmer-b.swimmer));
-  const byLane = new Map();
-  for(const r of rows){
-    if(!byLane.has(r.lane)) byLane.set(r.lane, []);
-    byLane.get(r.lane).push(r);
-  }
-
-  const totalReg = rows.length;
-  const totalEsperado = s.lanes.reduce((acc,l)=>acc+(l.swimmerCount||0),0);
-
-  let bestOverall = null;
-  for(const r of rows){
-    if(!bestOverall || r.timeMs < bestOverall.timeMs) bestOverall = r;
-  }
-
-  let html = `<div class="kpiRow">`;
-
-  if(bestOverall){
-    html += `
-      <div class="kpi">
-        <div class="kpiLabel">Mejor tiempo general</div>
-        <div class="kpiValue">${formatMs(bestOverall.timeMs)} (Carril ${bestOverall.lane} · Nadador ${bestOverall.swimmer})</div>
-      </div>`;
-  }
-
-  html += `
-      <div class="kpi">
-        <div class="kpiLabel">Registros</div>
-        <div class="kpiValue">${totalReg} / ${totalEsperado}</div>
-      </div>
-    </div>`;
-
-  for(let li=0; li<LANE_COUNT; li++){
-    const laneNum = li+1;
-    const configured = s.lanes[li].swimmerCount || 0;
-    const regs = byLane.get(laneNum) || [];
-    const faltan = Math.max(0, configured - regs.length);
-
-    let bestLane = null;
-    for(const r of regs){
-      if(!bestLane || r.timeMs < bestLane.timeMs) bestLane = r;
-    }
-
-    html += `
-      <div class="reportCard">
-        <div class="reportTitle">
-          Carril ${laneNum} · Configurados: ${configured} · Registrados: ${regs.length}
-          ${bestLane ? ` · Mejor: ${formatMs(bestLane.timeMs)}` : ""}
-        </div>
-        <table class="table">
-          <thead><tr><th>Nadador</th><th>Tiempo</th></tr></thead>
-          <tbody>
-            ${
-              regs.length
-                ? regs.map(r => `<tr><td>Nadador ${r.swimmer}</td><td>${r.time}</td></tr>`).join("")
-                : `<tr><td colspan="2">Sin registros</td></tr>`
-            }
-          </tbody>
-        </table>
-        ${faltan > 0 ? `<div class="warn">Faltan ${faltan} llegadas por registrar.</div>` : ""}
-      </div>`;
-  }
-
-  return html;
+function hideReport(){
+  els.reportSection.classList.add("hidden");
 }
 
 function exportCSV(seriesId){
-  const s = state.series.find(x => x.id === seriesId) || getActiveSeries();
-  if(!s || s.log.length === 0){
-    alert("No hay datos para exportar en esta serie.");
-    return;
-  }
+  const s = state.series.find(x => x.id === seriesId);
+  if(!s) return;
 
-  const headers = ["FechaHoraISO","IdSerie","EtiquetaSerie","DistanciaM","Carril","Nadador","Evento","TiempoMs","Tiempo"];
-  const lines = [headers.join(",")];
+  const header = ["serie","etiqueta","distancia_m","carril","nadador","tiempo_ms","tiempo"];
+  const lines = [header.join(",")];
 
   for(const r of s.log){
-    const line = [
-      r.timestampIso, r.seriesId, r.seriesLabel || "", r.distanceM,
-      r.lane, r.swimmer, r.event, r.timeMs, r.time
-    ].map(v => `"${String(v).replaceAll('"','""')}"`).join(",");
-    lines.push(line);
+    const row = [
+      `"${s.seriesIndex}/${s.totalSeries}"`,
+      `"${(state.config.label || "").replaceAll('"','""')}"`,
+      s.distance,
+      `"${laneLabel(r.laneIndex)}"`,
+      `"Nadador ${r.swimmerIndex}"`,
+      r.ms,
+      `"${formatMs(r.ms)}"`
+    ];
+    lines.push(row.join(","));
   }
 
-  const blob = new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8"});
+  const blob = new Blob([lines.join("\n")], { type:"text/csv;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  const stamp = new Date().toISOString().slice(0,19).replaceAll(":","-");
   a.href = url;
-  a.download = `crono_acuatica_${stamp}_${(s.label||"serie").replaceAll(" ","_")}.csv`;
+  a.download = `crono-acuatica_${s.seriesIndex}-de-${s.totalSeries}_${s.distance}m.csv`;
   document.body.appendChild(a);
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
-  setStatus(state.running ? "EN CURSO" : "DETENIDA", "📄 CSV exportado.");
+
+  setStatus(state.running ? "EN CURSO" : "DETENIDA", "CSV exportado.");
 }
 
-/* -----------------------
-   Historial
------------------------ */
 function renderHistory(){
   els.historyList.innerHTML = "";
 
   if(state.series.length === 0){
     els.historyList.innerHTML = `
-      <div class="histItem">
-        <div class="histName">Sin series guardadas</div>
-        <div class="histMeta">Cuando detengas una serie, quedará aquí.</div>
+      <div class="histEmpty">
+        Aún no hay series guardadas.<br/>
+        Cuando registres llegadas, el historial quedará aquí.
       </div>`;
     return;
   }
@@ -493,15 +389,13 @@ function renderHistory(){
         <button class="miniBtn primaryMini" data-act="view">Ver informe</button>
         <button class="miniBtn" data-act="csv">Exportar CSV</button>
       </div>`;
-    item.querySelector('[data-act="view"]').onclick = () => showReport(s.id, false);
+    item.querySelector('[data-act="view"]').onclick = () => showReport(s.id);
     item.querySelector('[data-act="csv"]').onclick = () => exportCSV(s.id);
     els.historyList.appendChild(item);
   }
 }
 
-/* -----------------------
-   Render carriles
------------------------ */
+/* --- Render carriles (Pads) --- */
 function render(){
   const active = getActiveSeries();
 
@@ -530,12 +424,13 @@ function render(){
     if(active){
       done = swimmers > 0 && (active.lanes[li].nextArrivalIndex > swimmers);
       const next = active.lanes[li].swimmerCount > 0 ? Math.min(active.lanes[li].nextArrivalIndex, swimmers) : 0;
-      txt.textContent = swimmers > 0 ? (done ? "Todas las llegadas registradas" : `Próxima llegada: Nadador ${next}`) : "Sin nadadores";
+      txt.textContent = swimmers > 0 ? (done ? "Todas las llegadas registradas" : `Próxima: Nadador ${next}`) : "Sin nadadores";
     }else{
       txt.textContent = swimmers > 0 ? "Listo (sin iniciar)" : "Sin nadadores";
     }
 
-    badge.appendChild(dot); badge.appendChild(txt);
+    badge.appendChild(dot);
+    badge.appendChild(txt);
     card.appendChild(badge);
 
     const btns = document.createElement("div");
@@ -543,7 +438,12 @@ function render(){
 
     const bArrival = document.createElement("button");
     bArrival.className = "bigBtn";
-    bArrival.textContent = "Registrar llegada ✅";
+    bArrival.type = "button";
+
+    // ✅ Solo icono (PAD)
+    bArrival.textContent = "✅";
+    bArrival.title = "Registrar llegada";
+    bArrival.setAttribute("aria-label", "Registrar llegada");
 
     bArrival.disabled = !active || !state.running || done || swimmers <= 0;
     bArrival.onclick = () => recordArrival(li, card, bArrival);
@@ -569,9 +469,7 @@ function render(){
   saveState();
 }
 
-/* -----------------------
-   Borrar todo
------------------------ */
+/* --- Borrar todo --- */
 function clearAll(){
   if(!confirm("¿Seguro que querés borrar TODO (historial completo)?")) return;
   localStorage.removeItem(STORAGE_KEY);
@@ -585,9 +483,7 @@ function clearAll(){
   render();
 }
 
-/* -----------------------
-   Eventos UI
------------------------ */
+/* --- Eventos UI --- */
 els.btnBuild.addEventListener("click", () => {
   syncConfigFromUI();
   saveState();
@@ -602,7 +498,7 @@ els.btnNextSeries.addEventListener("click", prepareNextSeries);
 
 els.btnReport.addEventListener("click", () => {
   const a = getActiveSeries();
-  if(a) showReport(a.id, false);
+  if(a) showReport(a.id);
 });
 
 els.btnExport.addEventListener("click", () => {
@@ -645,4 +541,3 @@ render();
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
 }
-
