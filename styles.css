@@ -497,3 +497,90 @@ button:active{ transform:scale(.98); }
   object-fit:contain;
   filter: drop-shadow(0 6px 14px rgba(0,0,0,.35));
 }
+/* ===========================
+   PARTE 2 (Carriles) en GRILLA
+   + Botón "Registrar llegada" tipo PAD
+   =========================== */
+
+/* Contenedor de carriles -> grilla responsive (PC + móvil) */
+.lanes{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  padding: 12px;
+}
+
+/* Tarjeta de carril más baja (menos scroll) */
+.laneCard{
+  margin: 0;                 /* saca el margin-bottom anterior */
+  padding: 12px;
+  border-radius: 18px;
+}
+
+/* Título y espacios más compactos */
+.laneTitle{
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+/* Badge más chico */
+.badge{
+  margin-bottom: 10px;
+  padding: 5px 9px;
+  font-size: 12px;
+}
+
+/* Zona del botón: que sea compacta */
+.laneBtns{
+  display: grid;
+  grid-template-columns: 1fr; /* por defecto una columna */
+  gap: 10px;
+}
+
+/* Botón principal -> PAD cuadrado */
+.bigBtn{
+  width: 100%;
+  aspect-ratio: 1 / 1;       /* ✅ lo hace cuadrado */
+  padding: 0;                /* ✅ elimina alto extra */
+  border-radius: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  font-weight: 950;
+  font-size: 16px;
+  line-height: 1.15;
+}
+
+/* Si el texto es largo (Registrar llegada), que se acomode bonito */
+.bigBtn span, .bigBtn{
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* Texto pequeño del carril (estado) más compacto */
+.small{
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+/* En pantallas muy grandes, permitimos más columnas (hasta 5 aprox.) */
+@media (min-width: 1100px){
+  .lanes{
+    grid-template-columns: repeat(5, minmax(200px, 1fr));
+  }
+}
+
+/* En móviles: 2 columnas para que el botón siga siendo tocable */
+@media (max-width: 560px){
+  .lanes{
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .laneCard{ padding: 10px; }
+  .bigBtn{ font-size: 14px; border-radius: 14px; }
+}
