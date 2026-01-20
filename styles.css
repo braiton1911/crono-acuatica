@@ -518,3 +518,88 @@ input::placeholder{ color:rgba(255,255,255,0.45); }
   .row{ grid-template-columns:1fr; }
   .chrono{ font-size: 38px; }
 }
+/* =========================================================
+   AJUSTE SOLO DEL PANEL (NO TOCA EL CRONÓMETRO)
+   - Achica inputs/select/carriles
+   - Ordena botones en 2/3 filas (grid)
+   ========================================================= */
+
+/* 1) Panel más compacto (sin tocar el cronómetro) */
+.panel{
+  padding: 10px 12px;
+}
+
+/* 2) Inputs/Select más chicos SOLO dentro del panelControls */
+.panelControls .row{
+  grid-template-columns: 92px 1fr;   /* etiqueta/valor más compactos */
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.panelControls input,
+.panelControls select{
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-size: 14px;
+}
+
+/* 3) Bloques de carriles (config) más compactos */
+.panelControls .grid-5{
+  gap: 8px;
+}
+
+.panelControls .laneCfg{
+  padding: 8px;
+  border-radius: 14px;
+}
+
+.panelControls .laneCfg span{
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.panelControls .laneCfg input{
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+/* 4) Botonera del panel: en grilla, 2 o 3 filas según tamaño */
+.panelControls .actions{
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr)); /* desktop/tablet */
+}
+
+/* Botones más chicos (solo en el panel) */
+.panelControls .btn{
+  padding: 10px 10px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 900;
+  white-space: nowrap;       /* evita que se rompan en 2 líneas */
+}
+
+/* Mobile: 2 columnas (4 filas aprox) */
+@media (max-width: 520px){
+  .panelControls .row{
+    grid-template-columns: 1fr;  /* labels arriba para ahorrar ancho */
+  }
+
+  .panelControls .actions{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .panelControls .btn{
+    font-size: 13px;
+    padding: 11px 10px;
+  }
+}
+
+/* Pantallas medias: 3 columnas (reduce alto del panel) */
+@media (min-width: 521px) and (max-width: 900px){
+  .panelControls .actions{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
