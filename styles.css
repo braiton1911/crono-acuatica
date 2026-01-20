@@ -1,322 +1,242 @@
 :root{
-  --negro:#0b0f14;
-  --negro-2:#111826;
-
   --azul:#1e6fb8;
-  --azul-osc:#0b3c5d;
-
+  --azul2:#0b3c5d;
   --naranja:#ff7a00;
-  --naranja-2:#ff9a3d;
-
-  --borde: rgba(255,255,255,0.12);
-
-  --blanco:#ffffff;
+  --negro:#0a0f14;
+  --panel:#0c141d;
+  --txt:#eaf2ff;
+  --muted:rgba(234,242,255,0.72);
+  --borde:rgba(255,255,255,0.10);
 }
 
 *{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; background:linear-gradient(180deg, #050a10, #07111a 40%, #050a10); color:var(--txt); font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial; }
 
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-  background:linear-gradient(180deg, #070a0f, #0b0f14 45%, #0b0f14);
-  color:var(--blanco);
-}
-
-/* Header */
 .header{
-  padding:16px 16px 12px;
-  background:linear-gradient(135deg, var(--negro), var(--azul-osc));
-  border-bottom:1px solid var(--borde);
+  padding:14px 14px 10px;
+  background:linear-gradient(135deg, rgba(30,111,184,0.45), rgba(10,15,20,0.88));
+  border-bottom:1px solid rgba(255,255,255,0.08);
 }
 
-.brand{
-  display:flex;
-  gap:12px;
-  align-items:center;
-}
+.brand{ display:flex; align-items:center; gap:12px; }
+.logo{ width:34px; height:34px; border-radius:10px; object-fit:cover; box-shadow:0 8px 18px rgba(0,0,0,0.35); }
+.shark{ width:34px; height:34px; }
+h1{ margin:0; font-size:22px; letter-spacing:0.3px; }
+.sub{ margin:4px 0 0; font-size:12px; color:rgba(234,242,255,0.75); }
 
-.logo{
-  width:40px;
-  height:40px;
-  object-fit:contain;
-  border-radius:10px;
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.35));
-}
-
-.shark{
-  width:40px;
-  height:40px;
-  color:#ffffff;
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.35));
-}
-
-.header h1{
-  margin:0;
-  font-size:20px;
-  font-weight:900;
-  letter-spacing:.2px;
-}
-
-.sub{
-  margin:6px 0 0;
-  font-size:12px;
-  opacity:.85;
-}
-
-/* Panel sticky */
 .panel{
-  padding:14px;
-  background:linear-gradient(180deg, rgba(17,24,38,0.92), rgba(11,15,20,0.92));
-  border-bottom:1px solid var(--borde);
-  position:sticky;
-  top:0;
-  z-index:10;
-  backdrop-filter: blur(8px);
-}
-
-/* ✅ Controles con scroll (solo en pantallas chicas) */
-.panelControls{
-  /* desktop: normal */
-}
-
-@media (max-width: 800px){
-  .panelControls{
-    max-height: 46vh;
-    overflow-y: auto;
-    padding-right: 6px;
-  }
-  .panelControls::-webkit-scrollbar{ width: 8px; }
-  .panelControls::-webkit-scrollbar-thumb{
-    background: rgba(255,255,255,0.12);
-    border-radius: 999px;
-  }
-}
-
-/* Crono “bonito” y grande */
-.chronoWrap{
+  margin:12px 14px;
+  background:rgba(255,255,255,0.04);
   border:1px solid var(--borde);
-  background:linear-gradient(180deg, rgba(30,111,184,0.20), rgba(255,122,0,0.10));
-  border-radius:18px;
-  padding:12px;
-  margin-bottom:10px;
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:0 14px 34px rgba(0,0,0,0.35);
 }
 
+/* ✅ CRONÓMETRO (NO TOCAR) */
+.chronoWrap{
+  padding:14px;
+  background:linear-gradient(135deg, rgba(30,111,184,0.25), rgba(255,122,0,0.22));
+  border-bottom:1px solid rgba(255,255,255,0.10);
+}
 .chronoTop{
   display:flex;
   align-items:flex-start;
   justify-content:space-between;
   gap:10px;
 }
-
-.chronoLabel{
-  font-size:12px;
-  font-weight:900;
-  opacity:.9;
-}
-
+.chronoLabel{ font-weight:900; font-size:14px; letter-spacing:0.5px; opacity:0.95; }
 .chrono{
-  font-size:44px;
-  font-weight:950;
+  font-size:54px;
+  font-weight:1000;
   letter-spacing:1px;
-  margin-top:6px;
-  line-height:1.05;
+  margin-top:4px;
 }
-
-.pill{
-  padding:8px 10px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:900;
-  border:1px solid var(--borde);
-  background:rgba(255,255,255,0.06);
-}
-
 .chronoHint{
   margin-top:8px;
-  font-size:12px;
-  opacity:.85;
+  color:rgba(234,242,255,0.82);
+  font-size:14px;
+}
+.pill{
+  align-self:flex-start;
+  padding:10px 14px;
+  border-radius:999px;
+  font-weight:900;
+  background:rgba(255,255,255,0.10);
+  border:1px solid rgba(255,255,255,0.16);
 }
 
-/* Form */
+/* ✅ PANEL CONTROLES (COMPACTO) */
+.panelControls{
+  padding:10px 12px 12px;
+  max-height: 380px;
+  overflow:auto;
+}
+
 .row{
   display:grid;
-  grid-template-columns:110px 1fr;
+  grid-template-columns: 92px 1fr;
   gap:10px;
   align-items:center;
-  margin:10px 0;
+  margin-bottom:8px;
 }
 
-label{
+.row label{
   font-weight:900;
-  opacity:.95;
+  font-size:13px;
+  color:rgba(234,242,255,0.92);
 }
 
 input, select{
   width:100%;
-  padding:14px 14px;
-  border-radius:18px;
-  border:1px solid var(--borde);
-  background:rgba(255,255,255,0.06);
-  color:#fff;
+  height:38px;
+  padding:0 12px;
+  border-radius:14px;
   outline:none;
+  border:1px solid rgba(255,255,255,0.10);
+  background:rgba(0,0,0,0.28);
+  color:var(--txt);
+  font-size:14px;
 }
 
-input::placeholder{ color:rgba(255,255,255,0.45); }
+input::placeholder{ color:rgba(234,242,255,0.45); }
 
+/* Config carriles (más compacto) */
 .grid-5{
-  grid-template-columns:repeat(5, 1fr);
+  grid-template-columns: 1fr;
 }
-
+.row.grid-5{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:8px;
+  margin-top:4px;
+}
 .laneCfg{
-  border:1px solid var(--borde);
-  background:rgba(255,255,255,0.05);
-  border-radius:18px;
-  padding:10px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px;
+  padding:8px 8px 10px;
 }
-
 .laneCfg span{
   display:block;
   font-size:12px;
   font-weight:900;
-  opacity:.85;
+  opacity:0.92;
   margin-bottom:6px;
 }
-
 .laneCfg input{
-  padding:10px 12px;
-  border-radius:14px;
+  height:34px;
+  border-radius:12px;
+  text-align:left;
 }
 
-/* Botones */
-.actions{
-  grid-template-columns:repeat(3, 1fr);
+/* Botones del panel en grilla compacta */
+.row.actions{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:8px;
+  margin-top:6px;
 }
-
 .btn{
-  padding:14px 12px;
-  border-radius:18px;
-  border:1px solid var(--borde);
+  height:40px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.10);
   background:rgba(255,255,255,0.06);
-  color:#fff;
+  color:var(--txt);
   font-weight:950;
+  font-size:13px;
   cursor:pointer;
+  box-shadow:0 10px 20px rgba(0,0,0,0.18);
 }
+.btn:active{ transform:translateY(1px); }
+.btn:disabled{ opacity:0.45; cursor:not-allowed; }
 
-.btn:hover{ filter:brightness(1.06); }
-
-.primary{
-  background:linear-gradient(135deg, var(--naranja), var(--naranja-2));
-  border:none;
-  color:#0b0f14;
+.btn.primary{
+  background:linear-gradient(135deg, rgba(255,122,0,0.95), rgba(255,122,0,0.72));
+  border-color:rgba(255,122,0,0.55);
+  color:#0a0f14;
 }
-
-.stop{
-  border:1px solid rgba(255,122,0,0.55);
+.btn.stop{
+  background:rgba(0,0,0,0.22);
+  border-color:rgba(255,122,0,0.55);
   color:var(--naranja);
-  background:rgba(255,122,0,0.08);
 }
-
-.danger{
-  border:1px solid rgba(255,80,80,0.55);
-  color:#ffb0b0;
-  background:rgba(255,80,80,0.10);
+.btn.danger{
+  background:rgba(255,0,0,0.10);
+  border-color:rgba(255,0,0,0.35);
+  color:#ff9aa0;
 }
 
 .status{
-  margin-top:10px;
-  border:1px solid var(--borde);
-  border-radius:18px;
-  padding:12px;
+  margin-top:8px;
+  padding:10px 12px;
+  border-radius:16px;
   background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
 }
+.hint{ margin-top:6px; font-size:12px; color:rgba(234,242,255,0.70); }
 
-.hint{
-  margin-top:6px;
-  font-size:12px;
-  opacity:.85;
-}
-
-/* Carriles */
+/* Carriles (pads) */
 .lanes{
-  padding:14px;
+  margin:12px 14px 6px;
   display:grid;
-  grid-template-columns:repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap:12px;
 }
 
-@media (min-width: 900px){
-  .lanes{ grid-template-columns:repeat(3, minmax(0, 1fr)); }
-}
-@media (min-width: 1200px){
-  .lanes{ grid-template-columns:repeat(4, minmax(0, 1fr)); }
-}
-
-/* Tarjeta carril */
 .laneCard{
-  background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-  border:1px solid var(--borde);
-  border-radius:22px;
-  padding:14px;
-  box-shadow:0 10px 26px rgba(0,0,0,0.25);
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.10);
+  border-radius:18px;
+  padding:12px;
+  box-shadow:0 10px 26px rgba(0,0,0,0.22);
 }
-
 .laneTitle{
+  font-weight:950;
   font-size:16px;
-  font-weight:950;
-  margin-bottom:8px;
-}
-
-.badge{
-  display:inline-flex;
-  gap:8px;
-  align-items:center;
-  padding:8px 10px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:950;
-  border:1px solid var(--borde);
-  background:rgba(255,255,255,0.06);
   margin-bottom:10px;
 }
 
-.badge .dot{
-  width:10px;
-  height:10px;
+.badge{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:8px 10px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(0,0,0,0.22);
+  font-size:12px;
+  color:rgba(234,242,255,0.82);
+}
+.dot{
+  width:12px; height:12px;
   border-radius:999px;
-  background:var(--azul);
+  background:rgba(30,111,184,0.9);
   box-shadow:0 0 0 4px rgba(30,111,184,0.18);
 }
 
 .laneBtns{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:10px;
+  margin-top:12px;
+  display:flex;
+  justify-content:center;
 }
 
 .bigBtn{
-  padding:18px 12px;
-  font-size:16px;
+  width:100%;
+  aspect-ratio: 1 / 1;
   border-radius:18px;
-  background:linear-gradient(135deg, rgba(30,111,184,0.09), rgba(30,111,184,0.65));
-  color:#fff;
-  border:none;
+  border:1px solid rgba(255,255,255,0.10);
+  background:rgba(255,255,255,0.06);
+  color:var(--txt);
+  font-size:56px;
+  font-weight:900;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:inset 0 8px 18px rgba(0,0,0,0.20), 0 12px 22px rgba(0,0,0,0.22);
 }
-
-.bigBtn:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-  background:rgba(255,255,255,0.08);
-  border:1px solid var(--borde);
-}
-
-.small{
-  margin-top:10px;
-  font-size:12px;
-  line-height:1.4;
-  opacity:.85;
-}
-
-.hidden{ display:none; }
+.bigBtn:disabled{ opacity:0.35; cursor:not-allowed; }
 
 .laneCard.done{
   opacity:.78;
@@ -336,6 +256,8 @@ input::placeholder{ color:rgba(255,255,255,0.45); }
 }
 
 /* Informe */
+.hidden{ display:none; }
+
 .reportSection{
   margin:0 14px 20px;
   background:rgba(255,255,255,0.05);
@@ -400,337 +322,56 @@ input::placeholder{ color:rgba(255,255,255,0.45); }
   border:1px solid var(--borde);
   border-radius:22px;
   overflow:hidden;
-  box-shadow:0 10px 26px rgba(0,0,0,0.22);
+  box-shadow:0 10px 26px rgba(0,0,0,0.20);
 }
-
 .historyHeader{
   padding:14px;
-  border-bottom:1px solid var(--borde);
-}
-
-.historyTitle{ font-weight:950; }
-.historySub{ font-size:12px; opacity:.8; margin-top:4px; }
-
-.historyList{
-  padding:12px;
   background:rgba(255,255,255,0.03);
+  border-bottom:1px solid rgba(255,255,255,0.08);
 }
+.historyTitle{ font-weight:950; }
+.historySub{ margin-top:4px; font-size:12px; color:rgba(234,242,255,0.70); }
+.historyList{ padding:12px; display:grid; gap:10px; }
 
 .histItem{
-  background:rgba(0,0,0,0.18);
-  border:1px solid var(--borde);
-  border-radius:18px;
+  border:1px solid rgba(255,255,255,0.10);
+  border-radius:16px;
   padding:12px;
-  margin-bottom:10px;
+  background:rgba(0,0,0,0.20);
 }
-
-.histName{ font-weight:950; font-size:14px; }
-.histMeta{ font-size:12px; opacity:.85; margin-top:4px; }
+.histName{ font-weight:950; font-size:13px; }
+.histMeta{ margin-top:4px; font-size:12px; color:rgba(234,242,255,0.70); }
 
 .histBtns{
+  margin-top:10px;
   display:flex;
   gap:8px;
-  margin-top:10px;
   flex-wrap:wrap;
 }
-
 .miniBtn{
-  padding:10px 12px;
-  border-radius:14px;
-  border:1px solid var(--borde);
+  height:34px;
+  padding:0 12px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.10);
   background:rgba(255,255,255,0.06);
-  font-weight:950;
-  color:#fff;
-}
-
-.primaryMini{
-  background:linear-gradient(135deg, var(--naranja), var(--naranja-2));
-  color:#0b0f14;
-  border:none;
-}
-
-/* ✅ Pads cuadrados (como te gustó) */
-@media (max-width: 700px){
-  .lanes{
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .laneCard{
-    position: relative !important;
-    aspect-ratio: 1 / 1 !important;
-    padding: 10px !important;
-    border-radius: 16px !important;
-    overflow: hidden !important;
-  }
-
-  .laneTitle{
-    position: absolute !important;
-    top: 10px !important;
-    left: 10px !important;
-    right: 10px !important;
-    margin: 0 !important;
-    font-size: 13px !important;
-    font-weight: 900 !important;
-    z-index: 3 !important;
-    pointer-events: none !important;
-  }
-
-  .badge{
-    position: absolute !important;
-    top: 36px !important;
-    left: 10px !important;
-    margin: 0 !important;
-    padding: 4px 8px !important;
-    font-size: 11px !important;
-    z-index: 3 !important;
-  }
-
-  .small{ display:none !important; }
-
-  .laneBtns{
-    position: absolute !important;
-    inset: 0 !important;
-    padding: 8px !important;
-    display: flex !important;
-    align-items: flex-end !important;
-    justify-content: center !important;
-    z-index: 2 !important;
-  }
-
-  .bigBtn{
-    width: 100% !important;
-    height: 62% !important;
-    border-radius: 14px !important;
-    padding: 0 !important;
-    font-size: 16px !important;
-    font-weight: 950 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-}
-
-/* Responsive panel grid */
-@media (max-width: 700px){
-  .grid-5{ grid-template-columns:repeat(4, 1fr); }
-  .actions{ grid-template-columns:1fr 1fr; }
-  .row{ grid-template-columns:1fr; }
-  .chrono{ font-size: 38px; }
-}
-/* =========================================================
-   PANEL ULTRA COMPACTO (NO TOCA EL CRONÓMETRO)
-   1) Etiqueta/Distancia/Series más chicos
-   2) Carriles config en 3 columnas (2 filas)
-   3) Botones en 3 columnas x 4 filas (más pequeños)
-   ========================================================= */
-
-.panel{
-  padding: 8px 10px;
-}
-
-/* 1) Etiqueta / Distancia / Series: más chicos */
-.panelControls .row{
-  grid-template-columns: 78px 1fr;  /* etiqueta más angosta */
-  gap: 6px;
-  margin: 6px 0;
-}
-
-.panelControls label{
-  font-size: 12px;
-}
-
-.panelControls input,
-.panelControls select{
-  padding: 8px 10px;
-  border-radius: 12px;
-  font-size: 13px;
-  min-height: 38px;
-}
-
-/* 2) Config carriles: 3 columnas (2 filas para 5 carriles) */
-.panelControls .grid-5{
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)); /* ✅ 3 columnas */
-  gap: 6px;
-}
-
-.panelControls .laneCfg{
-  padding: 6px;
-  border-radius: 12px;
-}
-
-.panelControls .laneCfg span{
-  font-size: 10px;
-  margin-bottom: 3px;
-  opacity: .9;
-}
-
-.panelControls .laneCfg input{
-  padding: 7px 8px;
-  border-radius: 10px;
-  font-size: 13px;
-  min-height: 34px;
-}
-
-/* 3) Botones: 3 columnas x (hasta) 4 filas */
-.panelControls .actions{
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)); /* ✅ 3 columnas */
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.panelControls .btn{
-  padding: 9px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 900;
-  line-height: 1.05;
-  white-space: nowrap;
-}
-
-/* Ajustes para pantallas muy chicas (celu angosto): sigue siendo 3 col,
-   pero achica aún más texto y padding para que entre */
-@media (max-width: 420px){
-  .panelControls .row{
-    grid-template-columns: 1fr; /* labels arriba para ahorrar ancho */
-  }
-
-  .panelControls input,
-  .panelControls select{
-    font-size: 12.5px;
-    padding: 8px 9px;
-  }
-
-  .panelControls .btn{
-    font-size: 11.5px;
-    padding: 9px 6px;
-  }
-
-  .panelControls .laneCfg span{
-    font-size: 9.5px;
-  }
-}
-
-/* En pantallas grandes, mantiene 3 col para compactar el panel */
-@media (min-width: 900px){
-  .panelControls .row{
-    grid-template-columns: 90px 1fr;
-  }
-}
-/* =========================================================
-   PANEL COMO LA IMAGEN (compacto)
-   - NO toca el cronómetro
-   - Ajusta SOLO: Etiqueta/Distancia/Series + Carriles config + Botonera
-   ========================================================= */
-
-/* Panel más fino */
-.panel { padding: 8px 10px; }
-
-/* --- 1) Etiqueta / Distancia / Series: label arriba + campo chico --- */
-.panelControls .row{
-  display: block;            /* label arriba */
-  margin: 8px 0;
-}
-
-.panelControls .row label{
-  display:block;
-  font-size:12px;
+  color:var(--txt);
   font-weight:900;
-  margin: 0 0 4px;
-  opacity:.95;
+  cursor:pointer;
+}
+.primaryMini{
+  background:linear-gradient(135deg, rgba(30,111,184,0.7), rgba(30,111,184,0.35));
+  border-color:rgba(30,111,184,0.45);
 }
 
-.panelControls .row input,
-.panelControls .row select{
-  width:100%;
-  max-width: 420px;          /* evita que se estire demasiado */
-  padding: 8px 10px;
-  min-height: 34px;
-  border-radius: 10px;
-  font-size: 13px;
+.histEmpty{
+  padding:16px;
+  color:rgba(234,242,255,0.70);
+  text-align:center;
 }
 
-/* --- 2) Carriles (cantidad nadadores): 5 en una fila, tarjetitas chicas --- */
-.panelControls .grid-5{
-  display:grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 8px;
-  align-items: stretch;
-  margin-top: 10px;
-}
-
-.panelControls .laneCfg{
-  padding: 6px 8px;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.04);
-}
-
-.panelControls .laneCfg span{
-  font-size: 11px;
-  font-weight: 900;
-  margin-bottom: 4px;
-  opacity: .9;
-}
-
-.panelControls .laneCfg input{
-  padding: 6px 8px;
-  min-height: 30px;
-  border-radius: 9px;
-  font-size: 13px;
-}
-
-/* En pantallas angostas, que bajen a 3 + 2 (si no entra 5) */
-@media (max-width: 520px){
-  .panelControls .grid-5{
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-/* --- 3) Botonera: 3 columnas con áreas (como tu imagen) --- */
-.panelControls .actions{
-  display:grid;
-  gap: 6px;
-  margin-top: 10px;
-
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-template-areas:
-    "gen start stop"
-    "undo next report"
-    "csv del  del";
-}
-
-/* Botones más chicos y “rectangulares” */
-.panelControls .actions .btn{
-  padding: 8px 8px;
-  min-height: 34px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 900;
-  white-space: nowrap;
-}
-
-/* Asignación por ORDEN (debe coincidir con tu app):
-   1 Generar | 2 Iniciar | 3 Detener | 4 Deshacer | 5 Preparar | 6 Ver | 7 Exportar | 8 Borrar
-*/
-.panelControls .actions .btn:nth-child(1){ grid-area: gen; }
-.panelControls .actions .btn:nth-child(2){ grid-area: start; }
-.panelControls .actions .btn:nth-child(3){ grid-area: stop; }
-.panelControls .actions .btn:nth-child(4){ grid-area: undo; }
-.panelControls .actions .btn:nth-child(5){ grid-area: next; }
-.panelControls .actions .btn:nth-child(6){ grid-area: report; }
-.panelControls .actions .btn:nth-child(7){ grid-area: csv; }
-.panelControls .actions .btn:nth-child(8){ grid-area: del; }
-
-/* En móviles muy angostos: 2 columnas para que no se aplasten */
-@media (max-width: 360px){
-  .panelControls .actions{
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-areas:
-      "gen start"
-      "stop undo"
-      "next report"
-      "csv del";
-  }
+/* Responsive */
+@media (min-width: 900px){
+  .lanes{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .panelControls{ max-height: 320px; }
+  .row.grid-5{ grid-template-columns: repeat(5, 1fr); }
 }

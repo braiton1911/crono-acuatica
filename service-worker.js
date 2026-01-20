@@ -1,4 +1,4 @@
-const CACHE = "crono-acuatica-v21";
+const CACHE = "crono-acuatica-v22";
 const ASSETS = [
   "./",
   "./index.html",
@@ -15,9 +15,9 @@ self.addEventListener("install", (e) => {
 
 self.addEventListener("activate", (e) => {
   e.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.map((k) => (k !== CACHE ? caches.delete(k) : null)))
-    ).then(() => self.clients.claim())
+    caches.keys()
+      .then((keys) => Promise.all(keys.map((k) => (k !== CACHE ? caches.delete(k) : null))))
+      .then(() => self.clients.claim())
   );
 });
 
