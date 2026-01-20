@@ -8,7 +8,7 @@
   --naranja:#ff7a00;
   --naranja-2:#ff9a3d;
 
-  --borde: rgba(255,255,255,12);
+  --borde: rgba(255,255,255,0.12);
 
   --blanco:#ffffff;
 }
@@ -40,14 +40,14 @@ body{
   height:40px;
   object-fit:contain;
   border-radius:10px;
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,35));
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.35));
 }
 
 .shark{
   width:40px;
   height:40px;
   color:#ffffff;
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,35));
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.35));
 }
 
 .header h1{
@@ -66,7 +66,7 @@ body{
 /* Panel sticky */
 .panel{
   padding:14px;
-  background:linear-gradient(180deg, rgba(17,24,38,92), rgba(11,15,20,92));
+  background:linear-gradient(180deg, rgba(17,24,38,0.92), rgba(11,15,20,0.92));
   border-bottom:1px solid var(--borde);
   position:sticky;
   top:0;
@@ -81,13 +81,13 @@ body{
 
 @media (max-width: 800px){
   .panelControls{
-    max-height: 46vh;      /* ✅ deja ver carriles sin tanto scroll */
+    max-height: 46vh;
     overflow-y: auto;
     padding-right: 6px;
   }
   .panelControls::-webkit-scrollbar{ width: 8px; }
   .panelControls::-webkit-scrollbar-thumb{
-    background: rgba(255,255,255,12);
+    background: rgba(255,255,255,0.12);
     border-radius: 999px;
   }
 }
@@ -95,7 +95,7 @@ body{
 /* Crono “bonito” y grande */
 .chronoWrap{
   border:1px solid var(--borde);
-  background:linear-gradient(180deg, rgba(30,111,184,20), rgba(255,122,0,10));
+  background:linear-gradient(180deg, rgba(30,111,184,0.20), rgba(255,122,0,0.10));
   border-radius:18px;
   padding:12px;
   margin-bottom:10px;
@@ -115,7 +115,7 @@ body{
 }
 
 .chrono{
-  font-size:44px;          /* ✅ MÁS GRANDE */
+  font-size:44px;
   font-weight:950;
   letter-spacing:1px;
   margin-top:6px;
@@ -128,7 +128,7 @@ body{
   font-size:12px;
   font-weight:900;
   border:1px solid var(--borde);
-  background:rgba(255,255,255,06);
+  background:rgba(255,255,255,0.06);
 }
 
 .chronoHint{
@@ -156,12 +156,12 @@ input, select{
   padding:14px 14px;
   border-radius:18px;
   border:1px solid var(--borde);
-  background:rgba(255,255,255,06);
+  background:rgba(255,255,255,0.06);
   color:#fff;
   outline:none;
 }
 
-input::placeholder{ color:rgba(255,255,255,45); }
+input::placeholder{ color:rgba(255,255,255,0.45); }
 
 .grid-5{
   grid-template-columns:repeat(5, 1fr);
@@ -169,7 +169,7 @@ input::placeholder{ color:rgba(255,255,255,45); }
 
 .laneCfg{
   border:1px solid var(--borde);
-  background:rgba(255,255,255,05);
+  background:rgba(255,255,255,0.05);
   border-radius:18px;
   padding:10px;
 }
@@ -196,7 +196,7 @@ input::placeholder{ color:rgba(255,255,255,45); }
   padding:14px 12px;
   border-radius:18px;
   border:1px solid var(--borde);
-  background:rgba(255,255,255,06);
+  background:rgba(255,255,255,0.06);
   color:#fff;
   font-weight:950;
   cursor:pointer;
@@ -211,15 +211,15 @@ input::placeholder{ color:rgba(255,255,255,45); }
 }
 
 .stop{
-  border:1px solid rgba(255,122,0,55);
+  border:1px solid rgba(255,122,0,0.55);
   color:var(--naranja);
-  background:rgba(255,122,0,08);
+  background:rgba(255,122,0,0.08);
 }
 
 .danger{
-  border:1px solid rgba(255,80,80,55);
+  border:1px solid rgba(255,80,80,0.55);
   color:#ffb0b0;
-  background:rgba(255,80,80,10);
+  background:rgba(255,80,80,0.10);
 }
 
 .status{
@@ -227,7 +227,7 @@ input::placeholder{ color:rgba(255,255,255,45); }
   border:1px solid var(--borde);
   border-radius:18px;
   padding:12px;
-  background:rgba(255,255,255,04);
+  background:rgba(255,255,255,0.04);
 }
 
 .hint{
@@ -253,11 +253,11 @@ input::placeholder{ color:rgba(255,255,255,45); }
 
 /* Tarjeta carril */
 .laneCard{
-  background:linear-gradient(180deg, rgba(255,255,255,06), rgba(255,255,255,02));
+  background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
   border:1px solid var(--borde);
   border-radius:22px;
   padding:14px;
-  box-shadow:0 10px 26px rgba(0,0,0,25);
+  box-shadow:0 10px 26px rgba(0,0,0,0.25);
 }
 
 .laneTitle{
@@ -275,7 +275,7 @@ input::placeholder{ color:rgba(255,255,255,45); }
   font-size:12px;
   font-weight:950;
   border:1px solid var(--borde);
-  background:rgba(255,255,255,06);
+  background:rgba(255,255,255,0.06);
   margin-bottom:10px;
 }
 
@@ -284,7 +284,7 @@ input::placeholder{ color:rgba(255,255,255,45); }
   height:10px;
   border-radius:999px;
   background:var(--azul);
-  box-shadow:0 0 0 4px rgba(30,111,184,18);
+  box-shadow:0 0 0 4px rgba(30,111,184,0.18);
 }
 
 .laneBtns{
@@ -297,7 +297,7 @@ input::placeholder{ color:rgba(255,255,255,45); }
   padding:18px 12px;
   font-size:16px;
   border-radius:18px;
-  background:linear-gradient(135deg, rgba(30,111,184,9), rgba(30,111,184,65));
+  background:linear-gradient(135deg, rgba(30,111,184,0.09), rgba(30,111,184,0.65));
   color:#fff;
   border:none;
 }
@@ -305,7 +305,7 @@ input::placeholder{ color:rgba(255,255,255,45); }
 .bigBtn:disabled{
   opacity:.55;
   cursor:not-allowed;
-  background:rgba(255,255,255,08);
+  background:rgba(255,255,255,0.08);
   border:1px solid var(--borde);
 }
 
@@ -320,7 +320,7 @@ input::placeholder{ color:rgba(255,255,255,45); }
 
 .laneCard.done{
   opacity:.78;
-  border-color:rgba(255,122,0,35);
+  border-color:rgba(255,122,0,0.35);
 }
 .laneCard.done .laneTitle::after{
   content:" · FINALIZADO";
@@ -338,11 +338,11 @@ input::placeholder{ color:rgba(255,255,255,45); }
 /* Informe */
 .reportSection{
   margin:0 14px 20px;
-  background:rgba(255,255,255,05);
+  background:rgba(255,255,255,0.05);
   border:1px solid var(--borde);
   border-radius:22px;
   overflow:hidden;
-  box-shadow:0 10px 26px rgba(0,0,0,25);
+  box-shadow:0 10px 26px rgba(0,0,0,0.25);
   scroll-margin-top: 120px;
 }
 
@@ -352,7 +352,7 @@ input::placeholder{ color:rgba(255,255,255,45); }
   justify-content:space-between;
   gap:10px;
   padding:14px;
-  background:linear-gradient(135deg, rgba(255,122,0,18), rgba(30,111,184,20));
+  background:linear-gradient(135deg, rgba(255,122,0,0.18), rgba(30,111,184,0.20));
   border-bottom:1px solid var(--borde);
 }
 
@@ -361,14 +361,14 @@ input::placeholder{ color:rgba(255,255,255,45); }
 
 .reportBody{
   padding:14px;
-  background:rgba(255,255,255,03);
+  background:rgba(255,255,255,0.03);
 }
 
 .reportFooter{
   display:flex;
   gap:10px;
   padding:14px;
-  background:rgba(255,255,255,03);
+  background:rgba(255,255,255,0.03);
   border-top:1px solid var(--borde);
 }
 
@@ -388,7 +388,7 @@ input::placeholder{ color:rgba(255,255,255,45); }
 }
 .tbl th{
   text-align:left;
-  background:rgba(255,255,255,06);
+  background:rgba(255,255,255,0.06);
   font-weight:950;
 }
 .tbl tr:last-child td{ border-bottom:none; }
@@ -396,11 +396,11 @@ input::placeholder{ color:rgba(255,255,255,45); }
 /* Historial */
 .historySection{
   margin:0 14px 24px;
-  background:rgba(255,255,255,05);
+  background:rgba(255,255,255,0.05);
   border:1px solid var(--borde);
   border-radius:22px;
   overflow:hidden;
-  box-shadow:0 10px 26px rgba(0,0,0,22);
+  box-shadow:0 10px 26px rgba(0,0,0,0.22);
 }
 
 .historyHeader{
@@ -413,11 +413,11 @@ input::placeholder{ color:rgba(255,255,255,45); }
 
 .historyList{
   padding:12px;
-  background:rgba(255,255,255,03);
+  background:rgba(255,255,255,0.03);
 }
 
 .histItem{
-  background:rgba(0,0,0,18);
+  background:rgba(0,0,0,0.18);
   border:1px solid var(--borde);
   border-radius:18px;
   padding:12px;
@@ -438,7 +438,7 @@ input::placeholder{ color:rgba(255,255,255,45); }
   padding:10px 12px;
   border-radius:14px;
   border:1px solid var(--borde);
-  background:rgba(255,255,255,06);
+  background:rgba(255,255,255,0.06);
   font-weight:950;
   color:#fff;
 }

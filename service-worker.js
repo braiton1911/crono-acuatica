@@ -1,4 +1,4 @@
-const CACHE = "crono-acuatica-v17";
+const CACHE = "crono-acuatica-v18";
 const ASSETS = [
   "./",
   "./index.html",
