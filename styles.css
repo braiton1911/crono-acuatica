@@ -619,3 +619,118 @@ input::placeholder{ color:rgba(255,255,255,0.45); }
     grid-template-columns: 90px 1fr;
   }
 }
+/* =========================================================
+   PANEL COMO LA IMAGEN (compacto)
+   - NO toca el cronómetro
+   - Ajusta SOLO: Etiqueta/Distancia/Series + Carriles config + Botonera
+   ========================================================= */
+
+/* Panel más fino */
+.panel { padding: 8px 10px; }
+
+/* --- 1) Etiqueta / Distancia / Series: label arriba + campo chico --- */
+.panelControls .row{
+  display: block;            /* label arriba */
+  margin: 8px 0;
+}
+
+.panelControls .row label{
+  display:block;
+  font-size:12px;
+  font-weight:900;
+  margin: 0 0 4px;
+  opacity:.95;
+}
+
+.panelControls .row input,
+.panelControls .row select{
+  width:100%;
+  max-width: 420px;          /* evita que se estire demasiado */
+  padding: 8px 10px;
+  min-height: 34px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+/* --- 2) Carriles (cantidad nadadores): 5 en una fila, tarjetitas chicas --- */
+.panelControls .grid-5{
+  display:grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  align-items: stretch;
+  margin-top: 10px;
+}
+
+.panelControls .laneCfg{
+  padding: 6px 8px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+}
+
+.panelControls .laneCfg span{
+  font-size: 11px;
+  font-weight: 900;
+  margin-bottom: 4px;
+  opacity: .9;
+}
+
+.panelControls .laneCfg input{
+  padding: 6px 8px;
+  min-height: 30px;
+  border-radius: 9px;
+  font-size: 13px;
+}
+
+/* En pantallas angostas, que bajen a 3 + 2 (si no entra 5) */
+@media (max-width: 520px){
+  .panelControls .grid-5{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* --- 3) Botonera: 3 columnas con áreas (como tu imagen) --- */
+.panelControls .actions{
+  display:grid;
+  gap: 6px;
+  margin-top: 10px;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-areas:
+    "gen start stop"
+    "undo next report"
+    "csv del  del";
+}
+
+/* Botones más chicos y “rectangulares” */
+.panelControls .actions .btn{
+  padding: 8px 8px;
+  min-height: 34px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+/* Asignación por ORDEN (debe coincidir con tu app):
+   1 Generar | 2 Iniciar | 3 Detener | 4 Deshacer | 5 Preparar | 6 Ver | 7 Exportar | 8 Borrar
+*/
+.panelControls .actions .btn:nth-child(1){ grid-area: gen; }
+.panelControls .actions .btn:nth-child(2){ grid-area: start; }
+.panelControls .actions .btn:nth-child(3){ grid-area: stop; }
+.panelControls .actions .btn:nth-child(4){ grid-area: undo; }
+.panelControls .actions .btn:nth-child(5){ grid-area: next; }
+.panelControls .actions .btn:nth-child(6){ grid-area: report; }
+.panelControls .actions .btn:nth-child(7){ grid-area: csv; }
+.panelControls .actions .btn:nth-child(8){ grid-area: del; }
+
+/* En móviles muy angostos: 2 columnas para que no se aplasten */
+@media (max-width: 360px){
+  .panelControls .actions{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "gen start"
+      "stop undo"
+      "next report"
+      "csv del";
+  }
+}
