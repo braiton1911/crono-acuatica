@@ -375,3 +375,19 @@ input::placeholder{ color:rgba(234,242,255,0.45); }
   .panelControls{ max-height: 320px; }
   .row.grid-5{ grid-template-columns: repeat(5, 1fr); }
 }
+/* ==========================================
+   CRONÓMETRO FIJO (no desaparece al scroll)
+   ========================================== */
+
+.chronoWrap {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  background: linear-gradient(
+    180deg,
+    rgba(10,20,30,0.95),
+    rgba(10,20,30,0.75)
+  );
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+}

@@ -209,22 +209,24 @@ function startSeries() {
         state.series.unshift(active);
       }
     } else {
-      if (active.log.length === 0) {
-        active.startMs = Date.now();
-        active.stopMs = null;
-        active.lanes.forEach((l, i) => {
-          l.swimmerCount = state.config.lanes[i].swimmerCount;
-          l.nextArrivalIndex = 1;
-        });
-      }
+      active.startMs = Date.now();
+      active.stopMs = null;
+      active.lanes.forEach((l, i) => {
+        l.swimmerCount = state.config.lanes[i].swimmerCount;
+        l.nextArrivalIndex = 1;
+      });
     }
   }
 
   state.running = true;
+
   saveState();
   hideReport();
   setStatus("EN CURSO", `Serie ${active.seriesIndex}/${active.totalSeries} iniciada.`);
   render();
+
+  // 🔥 CLAVE: reinicia el loop del cronómetro
+  startChronoLoop();
 }
 
 function stopSeries() {
