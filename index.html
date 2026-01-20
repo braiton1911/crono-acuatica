@@ -11,7 +11,7 @@
 <body>
   <header class="header">
     <div class="brand">
-      <!-- Logo (fallback: si no carga, muestra tiburón) -->
+      <!-- ✅ Logo correcto con .png -->
       <img
         src="./assets/logo-crono-acuatica.png"
         alt="Logo Crono-Acuatica"
@@ -19,7 +19,7 @@
         onerror="this.outerHTML = document.getElementById('sharkFallback').outerHTML;"
       />
 
-      <!-- Fallback tiburón (oculto, se usa si falla el logo) -->
+      <!-- Fallback tiburón (si no carga el logo) -->
       <svg id="sharkFallback" class="shark" viewBox="0 0 64 64" aria-hidden="true" style="display:none">
         <path d="M6 36c9-12 22-18 38-18 2-4 7-8 12-10-1 5-4 10-8 13 3 5 5 10 5 15 0 9-7 16-18 16H18c-6 0-10-4-12-9z" fill="white" opacity="0.92"/>
         <circle cx="43" cy="28" r="2.2" fill="#0b3c5d"/>
@@ -34,6 +34,7 @@
   </header>
 
   <section class="panel">
+    <!-- ✅ CRONO anclado -->
     <div class="chronoWrap">
       <div class="chronoTop">
         <div>
@@ -45,53 +46,56 @@
       <div id="chronoHint" class="chronoHint">Configurá carriles → iniciar serie.</div>
     </div>
 
-    <div class="row">
-      <label>Etiqueta</label>
-      <input id="label" placeholder="Ej: Grupo A (opcional)" />
-    </div>
+    <!-- ✅ Controles con scroll (sin tocar carriles) -->
+    <div class="panelControls">
+      <div class="row">
+        <label>Etiqueta</label>
+        <input id="label" placeholder="Ej: Grupo A (opcional)" />
+      </div>
 
-    <div class="row">
-      <label>Distancia</label>
-      <select id="distance">
-        <option value="50">50 m</option>
-        <option value="75">75 m</option>
-        <option value="100" selected>100 m</option>
-        <option value="150">150 m</option>
-        <option value="200">200 m</option>
-        <option value="400">400 m</option>
-      </select>
-    </div>
+      <div class="row">
+        <label>Distancia</label>
+        <select id="distance">
+          <option value="50">50 m</option>
+          <option value="75">75 m</option>
+          <option value="100" selected>100 m</option>
+          <option value="150">150 m</option>
+          <option value="200">200 m</option>
+          <option value="400">400 m</option>
+        </select>
+      </div>
 
-    <div class="row">
-      <label>Series</label>
-      <select id="totalSeries"></select>
-    </div>
+      <div class="row">
+        <label>Series</label>
+        <select id="totalSeries"></select>
+      </div>
 
-    <div class="row grid-5">
-      <div class="laneCfg"><span>Carril 1</span><input type="number" min="0" max="10" value="0" id="cfg1" /></div>
-      <div class="laneCfg"><span>Carril 2</span><input type="number" min="0" max="10" value="0" id="cfg2" /></div>
-      <div class="laneCfg"><span>Carril 3</span><input type="number" min="0" max="10" value="0" id="cfg3" /></div>
-      <div class="laneCfg"><span>Carril 4</span><input type="number" min="0" max="10" value="0" id="cfg4" /></div>
-      <div class="laneCfg"><span>Carril 5</span><input type="number" min="0" max="10" value="0" id="cfg5" /></div>
-    </div>
+      <div class="row grid-5">
+        <div class="laneCfg"><span>Carril 1</span><input type="number" min="0" max="10" value="0" id="cfg1" /></div>
+        <div class="laneCfg"><span>Carril 2</span><input type="number" min="0" max="10" value="0" id="cfg2" /></div>
+        <div class="laneCfg"><span>Carril 3</span><input type="number" min="0" max="10" value="0" id="cfg3" /></div>
+        <div class="laneCfg"><span>Carril 4</span><input type="number" min="0" max="10" value="0" id="cfg4" /></div>
+        <div class="laneCfg"><span>Carril 5</span><input type="number" min="0" max="10" value="0" id="cfg5" /></div>
+      </div>
 
-    <div class="row actions">
-      <button id="btnBuild" class="btn">Generar carriles</button>
-      <button id="btnStart" class="btn primary">Iniciar Serie</button>
-      <button id="btnStop" class="btn stop">Detener</button>
-    </div>
+      <div class="row actions">
+        <button id="btnBuild" class="btn">Generar carriles</button>
+        <button id="btnStart" class="btn primary">Iniciar Serie</button>
+        <button id="btnStop" class="btn stop">Detener</button>
+      </div>
 
-    <div class="row actions">
-      <button id="btnUndo" class="btn">↩ Deshacer</button>
-      <button id="btnNextSeries" class="btn">➡️ Preparar Serie siguiente</button>
-      <button id="btnReport" class="btn">📊 Ver informe</button>
-      <button id="btnExport" class="btn">⬇ Exportar CSV</button>
-      <button id="btnClearAll" class="btn danger">🗑 Borrar todo</button>
-    </div>
+      <div class="row actions">
+        <button id="btnUndo" class="btn">↩ Deshacer</button>
+        <button id="btnNextSeries" class="btn">➡️ Preparar Serie siguiente</button>
+        <button id="btnReport" class="btn">📊 Ver informe</button>
+        <button id="btnExport" class="btn">⬇ Exportar CSV</button>
+        <button id="btnClearAll" class="btn danger">🗑 Borrar todo</button>
+      </div>
 
-    <div class="status">
-      Estado: <strong id="statusText">DETENIDA</strong>
-      <div class="hint" id="lastMsg">En cada serie: Iniciar → registrar llegadas → Detener → descanso → Serie siguiente.</div>
+      <div class="status">
+        Estado: <strong id="statusText">DETENIDA</strong>
+        <div class="hint" id="lastMsg">En cada serie: Iniciar → registrar llegadas → Detener → descanso → Serie siguiente.</div>
+      </div>
     </div>
   </section>
 
@@ -124,7 +128,4 @@
   <script src="app.js"></script>
 </body>
 </html>
-
-
-
 

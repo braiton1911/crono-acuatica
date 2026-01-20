@@ -1,13 +1,11 @@
 /* ==========================
    CRONO-ACUATICA - app.js
-   (misma lógica, UI compacta)
+   Series consecutivas + pads cuadrados + panel scrolleable
    ========================== */
 
 const LANE_COUNT = 5;
-const POOL_LEN = 25;
-const STORAGE_KEY = "crono_acuatica_state_v1";
+const STORAGE_KEY = "crono_acuatica_state_v2"; // ✅ subimos versión para evitar estados viejos
 
-/* --- Elementos UI --- */
 const els = {
   label: document.getElementById("label"),
   distance: document.getElementById("distance"),
@@ -35,6 +33,7 @@ const els = {
 
   chrono: document.getElementById("chrono"),
   chronoHint: document.getElementById("chronoHint"),
+  pillState: document.getElementById("pillState"),
 
   lanes: document.getElementById("lanes"),
 
@@ -47,7 +46,7 @@ const els = {
   historyList: document.getElementById("historyList"),
 };
 
-/* --- Helpers --- */
+/* Helpers */
 const pad2 = (n) => String(n).padStart(2, "0");
 
 function formatMs(ms){
@@ -59,7 +58,6 @@ function formatMs(ms){
 }
 
 function laneLabel(i){ return `Carril ${i+1}`; }
-
 function nowIso(){ return new Date().toISOString(); }
 
 function newState(){
@@ -67,17 +65,17 @@ function newState(){
     config: {
       label: "",
       distance: 100,
-      totalSeries: 1,
+      totalSeries: 20, // ✅ por defecto 20 (vos lo pediste muchas veces)
       lanes: Array.from({length: LANE_COUNT}, () => ({ swimmerCount: 0 })),
     },
     running: false,
-    series: [], // historial de series
+    series: [], // historial (cada serie un objeto independiente)
   };
 }
 
 let state = loadState();
 
-/* --- Cargar/Guardar --- */
+/* Cargar/Guardar */
 function loadState(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -89,11 +87,12 @@ function loadState(){
     return newState();
   }
 }
+
 function saveState(){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-/* --- Series --- */
+/* Series */
 function buildSeriesLabel(seriesIndex, total, dist, customLabel){
   const base = customLabel?.trim() ? customLabel.trim() : "Entrenamiento";
   return `${base} · Serie ${seriesIndex}/${total} · ${dist} m`;
@@ -106,13 +105,13 @@ function getActiveSeries(){
 function syncConfigFromUI(){
   state.config.label = (els.label?.value || "").trim();
   state.config.distance = parseInt(els.distance?.value || "100", 10);
-  state.config.totalSeries = parseInt(els.totalSeries?.value || "1", 10);
+  state.config.totalSeries = parseInt(els.totalSeries?.value || "20", 10);
   for(let i=0;i<LANE_COUNT;i++){
     state.config.lanes[i].swimmerCount = Math.max(0, parseInt(els.cfg[i]?.value || "0", 10));
   }
 }
 
-/* --- Select series según distancia (1..20) --- */
+/* Select series según distancia (1..20) */
 function fillTotalSeriesSelect(){
   const dist = parseInt(els.distance.value, 10);
   els.totalSeries.innerHTML = "";
@@ -122,15 +121,20 @@ function fillTotalSeriesSelect(){
     opt.textContent = `${i} serie${i>1?"s":""} x${dist}`;
     els.totalSeries.appendChild(opt);
   }
-  els.totalSeries.value = String(state.config.totalSeries || 1);
+
+  // ✅ asegurar selección válida
+  const wanted = state?.config?.totalSeries ?? 20;
+  els.totalSeries.value = String(Math.min(20, Math.max(1, wanted)));
 }
 
-/* --- Cronómetro global --- */
+/* Cronómetro global */
 let chronoRAF = null;
+
 function stopChronoLoop(){
   if(chronoRAF) cancelAnimationFrame(chronoRAF);
   chronoRAF = null;
 }
+
 function startChronoLoop(){
   stopChronoLoop();
   const tick = () => {
@@ -139,13 +143,17 @@ function startChronoLoop(){
       const ms = Date.now() - a.startMs;
       els.chrono.textContent = formatMs(ms);
       els.chronoHint.textContent = `En curso: Serie ${a.seriesIndex}/${a.totalSeries} · ${a.distance} m`;
+      els.pillState.textContent = "EN CURSO";
     }else{
-      // si no corre, mostrar el último valor congelado si existe
       const a2 = getActiveSeries();
       if(a2 && a2.stopMs){
         els.chrono.textContent = formatMs(a2.stopMs - a2.startMs);
+        els.chronoHint.textContent = `Detenida: Serie ${a2.seriesIndex}/${a2.totalSeries} · ${a2.distance} m`;
+        els.pillState.textContent = "DETENIDA";
       }else{
         els.chrono.textContent = "00:00.00";
+        els.chronoHint.textContent = "Configurá carriles → iniciar serie.";
+        els.pillState.textContent = "DETENIDA";
       }
     }
     chronoRAF = requestAnimationFrame(tick);
@@ -153,44 +161,72 @@ function startChronoLoop(){
   chronoRAF = requestAnimationFrame(tick);
 }
 
-/* --- UI Estado --- */
+/* UI Estado */
 function setStatus(main, msg){
   els.statusText.textContent = main;
   els.lastMsg.textContent = msg || "";
+  els.pillState.textContent = main;
 }
 
-/* --- Acciones --- */
+/* Crear serie (helper) */
+function createSeries(seriesIndex, totalSeries, distance){
+  return {
+    id: crypto.randomUUID(),
+    createdAtIso: nowIso(),
+    label: buildSeriesLabel(seriesIndex, totalSeries, distance, state.config.label),
+    seriesIndex,
+    totalSeries,
+    distance,
+    startMs: Date.now(),
+    stopMs: null,
+    isActive: true,
+    lanes: state.config.lanes.map(l => ({ swimmerCount: l.swimmerCount, nextArrivalIndex: 1 })),
+    log: [], // {laneIndex, swimmerIndex, ms}
+  };
+}
+
+/* ✅ Iniciar serie (NO pisa la anterior) */
 function startSeries(){
   syncConfigFromUI();
 
-  // Si no existe serie activa, crear Serie 1
   let active = getActiveSeries();
+
+  // Si NO hay activa: crear Serie 1
   if(!active){
-    const seriesIndex = 1;
-    active = {
-      id: crypto.randomUUID(),
-      createdAtIso: nowIso(),
-      label: buildSeriesLabel(seriesIndex, state.config.totalSeries, state.config.distance, state.config.label),
-      seriesIndex,
-      totalSeries: state.config.totalSeries,
-      distance: state.config.distance,
-      startMs: Date.now(),
-      stopMs: null,
-      isActive: true,
-      lanes: state.config.lanes.map(l => ({ swimmerCount: l.swimmerCount, nextArrivalIndex: 1 })),
-      log: [], // {laneIndex, swimmerIndex, ms}
-    };
+    active = createSeries(1, state.config.totalSeries, state.config.distance);
     state.series.unshift(active);
-  }else{
-    // reiniciar cronómetro de la serie activa
-    active.startMs = Date.now();
-    active.stopMs = null;
-    // reset contador de llegadas por carril
-    active.lanes.forEach((l, i) => {
-      l.swimmerCount = state.config.lanes[i].swimmerCount;
-      l.nextArrivalIndex = 1;
-    });
-    active.log = [];
+  } else {
+    // Si hay una activa pero está detenida y ya tiene registros,
+    // al tocar "Iniciar" creamos la siguiente serie automáticamente (para historial)
+    const stopped = !state.running && active.stopMs;
+    const hasData = active.log.length > 0;
+
+    if(stopped && hasData){
+      if(active.seriesIndex < active.totalSeries){
+        // cerrar actual
+        active.isActive = false;
+        // crear siguiente
+        active = createSeries(active.seriesIndex + 1, active.totalSeries, active.distance);
+        state.series.unshift(active);
+      } else {
+        // si ya era la última, creamos una "extra" (no pisamos la anterior)
+        active.isActive = false;
+        active = createSeries(active.totalSeries, active.totalSeries, active.distance);
+        active.label = `${active.label} (extra)`;
+        state.series.unshift(active);
+      }
+    } else {
+      // Si no tenía datos (o estaba en curso), reiniciamos la MISMA serie
+      // (pero solo resetea si aún no hay registros)
+      if(active.log.length === 0){
+        active.startMs = Date.now();
+        active.stopMs = null;
+        active.lanes.forEach((l, i) => {
+          l.swimmerCount = state.config.lanes[i].swimmerCount;
+          l.nextArrivalIndex = 1;
+        });
+      }
+    }
   }
 
   state.running = true;
@@ -226,23 +262,10 @@ function prepareNextSeries(){
     return;
   }
 
-  // cerrar la actual como no-activa
   a.isActive = false;
-
-  // crear nueva serie
-  const newS = {
-    id: crypto.randomUUID(),
-    createdAtIso: nowIso(),
-    label: buildSeriesLabel(next, a.totalSeries, a.distance, state.config.label),
-    seriesIndex: next,
-    totalSeries: a.totalSeries,
-    distance: a.distance,
-    startMs: Date.now(),
-    stopMs: null,
-    isActive: true,
-    lanes: state.config.lanes.map(l => ({ swimmerCount: l.swimmerCount, nextArrivalIndex: 1 })),
-    log: [],
-  };
+  const newS = createSeries(next, a.totalSeries, a.distance);
+  newS.startMs = Date.now();
+  newS.stopMs = null;
   state.series.unshift(newS);
 
   saveState();
@@ -251,7 +274,7 @@ function prepareNextSeries(){
   render();
 }
 
-function recordArrival(laneIndex, cardEl, btnEl){
+function recordArrival(laneIndex, btnEl){
   const a = getActiveSeries();
   if(!a || !state.running) return;
 
@@ -264,7 +287,6 @@ function recordArrival(laneIndex, cardEl, btnEl){
 
   const ms = Date.now() - a.startMs;
   a.log.push({ laneIndex, swimmerIndex, ms });
-
   lane.nextArrivalIndex++;
 
   // feedback rápido
@@ -280,7 +302,6 @@ function undoSmart(){
   const a = getActiveSeries();
   if(!a || a.log.length === 0) return;
 
-  // deshacer último registro
   const last = a.log.pop();
   const lane = a.lanes[last.laneIndex];
   lane.nextArrivalIndex = Math.max(1, lane.nextArrivalIndex - 1);
@@ -290,7 +311,7 @@ function undoSmart(){
   render();
 }
 
-/* --- Reporte e historial --- */
+/* Reporte e historial */
 function showReport(seriesId){
   const s = state.series.find(x => x.id === seriesId);
   if(!s) return;
@@ -301,7 +322,6 @@ function showReport(seriesId){
   if(s.log.length === 0){
     els.reportBody.innerHTML = `<div class="muted">No hay llegadas registradas en esta serie.</div>`;
   }else{
-    // tabla simple
     const rows = s.log
       .slice()
       .sort((a,b) => a.ms - b.ms)
@@ -322,6 +342,8 @@ function showReport(seriesId){
   }
 
   els.reportSection.classList.remove("hidden");
+  // ✅ scroll suave al informe
+  els.reportSection.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function hideReport(){
@@ -373,7 +395,7 @@ function renderHistory(){
     return;
   }
 
-  const max = Math.min(12, state.series.length);
+  const max = Math.min(20, state.series.length);
   for(let i=0; i<max; i++){
     const s = state.series[i];
     const when = new Date(s.createdAtIso).toLocaleString();
@@ -395,7 +417,7 @@ function renderHistory(){
   }
 }
 
-/* --- Render carriles (Pads) --- */
+/* Render carriles (pads) */
 function render(){
   const active = getActiveSeries();
 
@@ -440,28 +462,18 @@ function render(){
     bArrival.className = "bigBtn";
     bArrival.type = "button";
 
-    // ✅ Solo icono (PAD)
+    // ✅ PAD: solo icono
     bArrival.textContent = "✅";
     bArrival.title = "Registrar llegada";
     bArrival.setAttribute("aria-label", "Registrar llegada");
 
     bArrival.disabled = !active || !state.running || done || swimmers <= 0;
-    bArrival.onclick = () => recordArrival(li, card, bArrival);
+    bArrival.onclick = () => recordArrival(li, bArrival);
 
     btns.appendChild(bArrival);
     card.appendChild(btns);
 
-    const info = document.createElement("div");
-    info.className = "small";
-    if(active){
-      if(done) card.classList.add("done");
-      const registered = Math.max(0, active.lanes[li].nextArrivalIndex - 1);
-      info.textContent = `Registradas: ${registered}/${swimmers} · ${state.running ? "Serie en curso" : "Serie detenida"}`;
-    }else{
-      info.textContent = "Esperando largada.";
-    }
-    card.appendChild(info);
-
+    if(active && done) card.classList.add("done");
     els.lanes.appendChild(card);
   }
 
@@ -469,7 +481,7 @@ function render(){
   saveState();
 }
 
-/* --- Borrar todo --- */
+/* Borrar todo */
 function clearAll(){
   if(!confirm("¿Seguro que querés borrar TODO (historial completo)?")) return;
   localStorage.removeItem(STORAGE_KEY);
@@ -478,12 +490,12 @@ function clearAll(){
   hideReport();
   stopChronoLoop();
   els.chrono.textContent = "00:00.00";
-  els.chronoHint.textContent = "Listo para iniciar";
+  els.chronoHint.textContent = "Configurá carriles → iniciar serie.";
   setStatus("DETENIDA", "Todo borrado.");
   render();
 }
 
-/* --- Eventos UI --- */
+/* Eventos UI */
 els.btnBuild.addEventListener("click", () => {
   syncConfigFromUI();
   saveState();
@@ -533,7 +545,6 @@ syncConfigFromUI();
 saveState();
 
 setStatus(state.running ? "EN CURSO" : "DETENIDA", "Listo.");
-els.chronoHint.textContent = "Configurá carriles → iniciar serie.";
 startChronoLoop();
 render();
 

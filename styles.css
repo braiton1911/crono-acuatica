@@ -4,13 +4,12 @@
 
   --azul:#1e6fb8;
   --azul-osc:#0b3c5d;
-  --azul-claro:#eaf4fb;
 
   --naranja:#ff7a00;
   --naranja-2:#ff9a3d;
 
   --borde: rgba(255,255,255,12);
-  --borde2: rgba(0,0,0,10);
+
   --blanco:#ffffff;
 }
 
@@ -36,6 +35,14 @@ body{
   align-items:center;
 }
 
+.logo{
+  width:40px;
+  height:40px;
+  object-fit:contain;
+  border-radius:10px;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,35));
+}
+
 .shark{
   width:40px;
   height:40px;
@@ -56,7 +63,7 @@ body{
   opacity:.85;
 }
 
-/* Panel (sticky) */
+/* Panel sticky */
 .panel{
   padding:14px;
   background:linear-gradient(180deg, rgba(17,24,38,92), rgba(11,15,20,92));
@@ -65,11 +72,27 @@ body{
   top:0;
   z-index:10;
   backdrop-filter: blur(8px);
-
-  /* ✅ IMPORTANTE: sin max-height ni overflow (así vuelve el crono “bonito” y no se “pierde” el historial) */
 }
 
-/* Crono */
+/* ✅ Controles con scroll (solo en pantallas chicas) */
+.panelControls{
+  /* desktop: normal */
+}
+
+@media (max-width: 800px){
+  .panelControls{
+    max-height: 46vh;      /* ✅ deja ver carriles sin tanto scroll */
+    overflow-y: auto;
+    padding-right: 6px;
+  }
+  .panelControls::-webkit-scrollbar{ width: 8px; }
+  .panelControls::-webkit-scrollbar-thumb{
+    background: rgba(255,255,255,12);
+    border-radius: 999px;
+  }
+}
+
+/* Crono “bonito” y grande */
 .chronoWrap{
   border:1px solid var(--borde);
   background:linear-gradient(180deg, rgba(30,111,184,20), rgba(255,122,0,10));
@@ -92,7 +115,7 @@ body{
 }
 
 .chrono{
-  font-size:36px;
+  font-size:44px;          /* ✅ MÁS GRANDE */
   font-weight:950;
   letter-spacing:1px;
   margin-top:6px;
@@ -311,12 +334,6 @@ input::placeholder{ color:rgba(255,255,255,45); }
   60%{ transform:scale(1.02); }
   100%{ transform:scale(1); }
 }
-.laneCard.flash{ animation:flashLane .55s ease-out; }
-@keyframes flashLane{
-  0%{ box-shadow:0 0 0 0 rgba(30,111,184,0); }
-  35%{ box-shadow:0 0 0 6px rgba(30,111,184,18); }
-  100%{ box-shadow:0 0 0 0 rgba(30,111,184,0); }
-}
 
 /* Informe */
 .reportSection{
@@ -326,8 +343,6 @@ input::placeholder{ color:rgba(255,255,255,45); }
   border-radius:22px;
   overflow:hidden;
   box-shadow:0 10px 26px rgba(0,0,0,25);
-
-  /* ✅ como ya no hay panel con overflow interno, dejamos esto más normal */
   scroll-margin-top: 120px;
 }
 
@@ -357,67 +372,26 @@ input::placeholder{ color:rgba(255,255,255,45); }
   border-top:1px solid var(--borde);
 }
 
-.reportCard{
-  background:rgba(0,0,0,18);
-  border:1px solid var(--borde);
-  border-radius:18px;
-  padding:12px;
-  margin-bottom:12px;
-}
-
-.reportTitle{
-  font-weight:950;
-  margin-bottom:8px;
-}
-
-.table{
+/* Tabla reporte */
+.tbl{
   width:100%;
   border-collapse:separate;
   border-spacing:0;
-  overflow:hidden;
   border:1px solid var(--borde);
   border-radius:14px;
+  overflow:hidden;
 }
-
-.table th, .table td{
+.tbl th, .tbl td{
   padding:10px;
   font-size:13px;
   border-bottom:1px solid var(--borde);
 }
-
-.table th{
+.tbl th{
   text-align:left;
   background:rgba(255,255,255,06);
   font-weight:950;
 }
-
-.table tr:last-child td{ border-bottom:none; }
-
-.kpiRow{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  margin-bottom:12px;
-}
-
-.kpi{
-  flex:1;
-  min-width:180px;
-  background:rgba(0,0,0,18);
-  border:1px solid var(--borde);
-  border-radius:18px;
-  padding:12px;
-}
-
-.kpiLabel{ font-size:12px; opacity:.85; margin-bottom:6px; }
-.kpiValue{ font-weight:950; font-size:16px; }
-
-.warn{
-  margin-top:8px;
-  font-size:12px;
-  color:var(--naranja);
-  font-weight:950;
-}
+.tbl tr:last-child td{ border-bottom:none; }
 
 /* Historial */
 .historySection{
@@ -475,13 +449,7 @@ input::placeholder{ color:rgba(255,255,255,45); }
   border:none;
 }
 
-.dangerMini{
-  background:rgba(255,80,80,12);
-  border:1px solid rgba(255,80,80,55);
-  color:#ffd0d0;
-}
-
-/* ====== Carriles en “tiles” cuadrados (como te gustó) ====== */
+/* ✅ Pads cuadrados (como te gustó) */
 @media (max-width: 700px){
   .lanes{
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -535,7 +503,7 @@ input::placeholder{ color:rgba(255,255,255,45); }
     height: 62% !important;
     border-radius: 14px !important;
     padding: 0 !important;
-    font-size: 14px !important;
+    font-size: 16px !important;
     font-weight: 950 !important;
     display: flex !important;
     align-items: center !important;
@@ -548,4 +516,5 @@ input::placeholder{ color:rgba(255,255,255,45); }
   .grid-5{ grid-template-columns:repeat(4, 1fr); }
   .actions{ grid-template-columns:1fr 1fr; }
   .row{ grid-template-columns:1fr; }
+  .chrono{ font-size: 38px; }
 }
