@@ -519,87 +519,103 @@ input::placeholder{ color:rgba(255,255,255,0.45); }
   .chrono{ font-size: 38px; }
 }
 /* =========================================================
-   AJUSTE SOLO DEL PANEL (NO TOCA EL CRONÓMETRO)
-   - Achica inputs/select/carriles
-   - Ordena botones en 2/3 filas (grid)
+   PANEL ULTRA COMPACTO (NO TOCA EL CRONÓMETRO)
+   1) Etiqueta/Distancia/Series más chicos
+   2) Carriles config en 3 columnas (2 filas)
+   3) Botones en 3 columnas x 4 filas (más pequeños)
    ========================================================= */
 
-/* 1) Panel más compacto (sin tocar el cronómetro) */
 .panel{
-  padding: 10px 12px;
+  padding: 8px 10px;
 }
 
-/* 2) Inputs/Select más chicos SOLO dentro del panelControls */
+/* 1) Etiqueta / Distancia / Series: más chicos */
 .panelControls .row{
-  grid-template-columns: 92px 1fr;   /* etiqueta/valor más compactos */
-  gap: 8px;
-  margin: 8px 0;
+  grid-template-columns: 78px 1fr;  /* etiqueta más angosta */
+  gap: 6px;
+  margin: 6px 0;
+}
+
+.panelControls label{
+  font-size: 12px;
 }
 
 .panelControls input,
 .panelControls select{
-  padding: 10px 12px;
-  border-radius: 14px;
-  font-size: 14px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  min-height: 38px;
 }
 
-/* 3) Bloques de carriles (config) más compactos */
+/* 2) Config carriles: 3 columnas (2 filas para 5 carriles) */
 .panelControls .grid-5{
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)); /* ✅ 3 columnas */
+  gap: 6px;
 }
 
 .panelControls .laneCfg{
-  padding: 8px;
-  border-radius: 14px;
+  padding: 6px;
+  border-radius: 12px;
 }
 
 .panelControls .laneCfg span{
-  font-size: 11px;
-  margin-bottom: 4px;
+  font-size: 10px;
+  margin-bottom: 3px;
+  opacity: .9;
 }
 
 .panelControls .laneCfg input{
-  padding: 8px 10px;
-  border-radius: 12px;
-  font-size: 14px;
+  padding: 7px 8px;
+  border-radius: 10px;
+  font-size: 13px;
+  min-height: 34px;
 }
 
-/* 4) Botonera del panel: en grilla, 2 o 3 filas según tamaño */
+/* 3) Botones: 3 columnas x (hasta) 4 filas */
 .panelControls .actions{
   display: grid;
-  gap: 8px;
-  margin-top: 10px;
-  grid-template-columns: repeat(4, minmax(0, 1fr)); /* desktop/tablet */
+  grid-template-columns: repeat(3, minmax(0, 1fr)); /* ✅ 3 columnas */
+  gap: 6px;
+  margin-top: 8px;
 }
 
-/* Botones más chicos (solo en el panel) */
 .panelControls .btn{
-  padding: 10px 10px;
-  border-radius: 14px;
-  font-size: 13px;
+  padding: 9px 8px;
+  border-radius: 12px;
+  font-size: 12px;
   font-weight: 900;
-  white-space: nowrap;       /* evita que se rompan en 2 líneas */
+  line-height: 1.05;
+  white-space: nowrap;
 }
 
-/* Mobile: 2 columnas (4 filas aprox) */
-@media (max-width: 520px){
+/* Ajustes para pantallas muy chicas (celu angosto): sigue siendo 3 col,
+   pero achica aún más texto y padding para que entre */
+@media (max-width: 420px){
   .panelControls .row{
-    grid-template-columns: 1fr;  /* labels arriba para ahorrar ancho */
+    grid-template-columns: 1fr; /* labels arriba para ahorrar ancho */
   }
 
-  .panelControls .actions{
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .panelControls input,
+  .panelControls select{
+    font-size: 12.5px;
+    padding: 8px 9px;
   }
 
   .panelControls .btn{
-    font-size: 13px;
-    padding: 11px 10px;
+    font-size: 11.5px;
+    padding: 9px 6px;
+  }
+
+  .panelControls .laneCfg span{
+    font-size: 9.5px;
   }
 }
 
-/* Pantallas medias: 3 columnas (reduce alto del panel) */
-@media (min-width: 521px) and (max-width: 900px){
-  .panelControls .actions{
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+/* En pantallas grandes, mantiene 3 col para compactar el panel */
+@media (min-width: 900px){
+  .panelControls .row{
+    grid-template-columns: 90px 1fr;
   }
 }
