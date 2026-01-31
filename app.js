@@ -303,7 +303,45 @@ function undoSmart() {
   render();
 }
 
-/* Reporte e historial */
+/* =========================
+   REPORTE e HISTORIAL
+   - 1) showReport(seriesId): una serie (carril -> nadadores)
+   - 2) showHistoryReport(): historial completo (serie -> carril -> nadadores)
+   ========================= */
+
+function laneReportTable(laneArr) {
+  if (!laneArr || laneArr.length === 0) return `<div class="muted">Sin registros</div>`;
+
+  laneArr.sort((a, b) => a.swimmerIndex - b.swimmerIndex);
+
+  const rows = laneArr.map(r => `
+    <tr>
+      <td>Nadador ${r.swimmerIndex}</td>
+      <td>${formatMs(r.ms)}</td>
+    </tr>
+  `).join("");
+
+  return `
+    <table class="tbl">
+      <thead><tr><th>Nadador</th><th>Tiempo</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+}
+
+function renderSeriesReportHTML(s) {
+  const byLane = Array.from({ length: LANE_COUNT }, () => []);
+  for (const r of s.log) byLane[r.laneIndex].push(r);
+
+  return byLane.map((laneArr, laneIndex) => `
+    <div style="margin: 12px 0;">
+      <div style="font-weight:950; margin-bottom:6px;">${laneLabel(laneIndex)}</div>
+      ${laneReportTable(laneArr)}
+    </div>
+  `).join("");
+}
+
+/* Informe de 1 sola serie (desde historial item) */
 function showReport(seriesId) {
   const s = state.series.find(x => x.id === seriesId);
   if (!s) return;
@@ -311,29 +349,59 @@ function showReport(seriesId) {
   els.reportSub.textContent = s.label;
   els.reportBody.innerHTML = "";
 
-  if (s.log.length === 0) {
+  if (!s.log || s.log.length === 0) {
     els.reportBody.innerHTML = `<div class="muted">No hay llegadas registradas en esta serie.</div>`;
   } else {
-    const rows = s.log
-      .slice()
-      .sort((a, b) => a.ms - b.ms)
-      .map(r => `
-        <tr>
-          <td>${laneLabel(r.laneIndex)}</td>
-          <td>Nadador ${r.swimmerIndex}</td>
-          <td>${formatMs(r.ms)}</td>
-        </tr>
-      `).join("");
-
-    els.reportBody.innerHTML = `
-      <table class="tbl">
-        <thead><tr><th>Carril</th><th>Nadador</th><th>Tiempo</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    `;
+    els.reportBody.innerHTML = renderSeriesReportHTML(s);
   }
 
-  // ✅ asegurar que ABRE (aunque el botón esté apretado muchas veces)
+  els.reportSection.classList.remove("hidden");
+  requestAnimationFrame(() => {
+    els.reportSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
+/* Informe del HISTORIAL COMPLETO (serie -> carril -> nadadores) */
+function showHistoryReport() {
+  if (!state.series || state.series.length === 0) {
+    els.reportSub.textContent = "Historial";
+    els.reportBody.innerHTML = `<div class="muted">Aún no hay series guardadas.</div>`;
+    els.reportSection.classList.remove("hidden");
+    requestAnimationFrame(() => {
+      els.reportSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    return;
+  }
+
+  els.reportSub.textContent = "Historial (Series separadas)";
+  els.reportBody.innerHTML = "";
+
+  const html = state.series.map((s, idx) => {
+    const when = new Date(s.createdAtIso).toLocaleString();
+    const regs = s.log?.length || 0;
+    const expected = s.lanes?.reduce((acc, l) => acc + (l.swimmerCount || 0), 0) || 0;
+
+    const content = regs === 0
+      ? `<div class="muted">Sin registros en esta serie.</div>`
+      : renderSeriesReportHTML(s);
+
+    return `
+      <details ${idx === 0 ? "open" : ""} style="margin: 12px 0; border:1px solid rgba(255,255,255,0.10); border-radius:16px; background:rgba(0,0,0,0.18); overflow:hidden;">
+        <summary style="cursor:pointer; padding:12px 12px; font-weight:950; list-style:none;">
+          ${s.label}
+          <div style="font-weight:700; font-size:12px; opacity:.8; margin-top:4px;">
+            ${when} · Registros ${regs}/${expected}
+          </div>
+        </summary>
+        <div style="padding:12px;">
+          ${content}
+        </div>
+      </details>
+    `;
+  }).join("");
+
+  els.reportBody.innerHTML = html;
+
   els.reportSection.classList.remove("hidden");
   requestAnimationFrame(() => {
     els.reportSection.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -415,8 +483,10 @@ function renderHistory() {
 function render() {
   const active = getActiveSeries();
 
-  // ✅ Ver informe SIEMPRE habilitado si existe una serie activa (aunque esté vacía)
-  els.btnReport.disabled = !active;
+  // ✅ "Ver informe" habilitado si existe AL MENOS una serie en historial
+  els.btnReport.disabled = !(state.series && state.series.length > 0);
+
+  // Exportar solo si hay serie activa y tiene datos
   els.btnExport.disabled = !(active && active.log.length > 0);
 
   els.lanes.innerHTML = "";
@@ -501,13 +571,9 @@ els.btnStop.addEventListener("click", stopSeries);
 els.btnUndo.addEventListener("click", undoSmart);
 els.btnNextSeries.addEventListener("click", prepareNextSeries);
 
+// ✅ "Ver informe" del panel = HISTORIAL COMPLETO separado por serie
 els.btnReport.addEventListener("click", () => {
-  const a = getActiveSeries();
-  if (!a) {
-    setStatus("DETENIDA", "Primero iniciá una serie.");
-    return;
-  }
-  showReport(a.id);
+  showHistoryReport();
 });
 
 els.btnExport.addEventListener("click", () => {
